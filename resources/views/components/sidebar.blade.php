@@ -3,7 +3,7 @@
 @endphp
 @if ($user)
     {{-- ROLE: ADMIN --}}
-    @if ($user->role === 'admin')
+    {{-- @if ($user->role === 'admin')
         <li class="nav-item">
             <a class="nav-link fw-bold {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
                 href="{{ route('admin.dashboard') }}">
@@ -58,13 +58,13 @@
                 <span class="nav-text ms-2">Setting</span>
             </a>
         </li>
-    @endif
-    @if ($user->role === 'master')
+    @endif --}}
+    @if ($user->role === 'master' || 'admin')
         <li class="nav-item">
             <a class="nav-link fw-bold active"
                 href="#">
-                <i class="bi bi-clipboard-data"></i>
-                <span class="nav-text ms-2">Setting</span>
+                <i class="bi bi-house-door"></i>
+                <span class="nav-text ms-2">Home</span>
             </a>
         </li>
     @endif
