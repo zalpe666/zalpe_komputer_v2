@@ -8,10 +8,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth', 'role:master,admin'])->group(function () {
-
-     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-
+Route::middleware(['auth', 'role:master,admin'])->prefix('dashboard')->as('admin.')->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
