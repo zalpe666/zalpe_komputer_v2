@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardCategoriesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'role:master,admin'])->prefix('dashboard')->as('admin.')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+        Route::get('/categories',[DashboardCategoriesController::class,'index'])->name('categories.index');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
