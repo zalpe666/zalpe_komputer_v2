@@ -4,19 +4,19 @@
 
 @section('content')
     <div class="container-fluid">
-        <nav aria-label="breadcrumb" class="mb-3">
-            <ol class="breadcrumb mb-0 align-items-center">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb bg-transparent p-0 mb-0">
                 <li class="breadcrumb-item">
-                    <a href="{{ route('admin.dashboard.index') }}" class="text-decoration-none text-secondary">
-                        Home
+                    <a href="{{ route('admin.dashboard.index') }}" class="text-muted text-decoration-none">
+                        Dashboard
                     </a>
                 </li>
-                <li class="breadcrumb-item active fw-semibold" aria-current="page">
+                <li class="breadcrumb-item active fw-semibold text-dark" aria-current="page">
                     Categories
                 </li>
             </ol>
         </nav>
-         <div class="table-responsive">
+        <div class="table-responsive">
             <table class="table table-bordered table-hover align-middle">
                 <thead class="table-light">
                     <tr>
@@ -56,8 +56,8 @@
                     @endforelse
                 </tbody>
             </table>
-    </div>
+        </div>
 
-    {{ $categories->links('pagination::bootstrap-5') }}
+        {{ $categories->links('pagination::bootstrap-5') }}
     </div>
 @endsection

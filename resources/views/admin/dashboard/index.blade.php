@@ -2,5 +2,7 @@
 
 @section('title', 'Admin Panel')
 @section('content')
-    <p>ini adalah admin </p>
+   <div class="container">
+    <h1>Ini Adalah Admin</h1>
+   </div>
 @endsection
