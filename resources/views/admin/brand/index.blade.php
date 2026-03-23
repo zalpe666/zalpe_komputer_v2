@@ -13,16 +13,16 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Categories
+                    Brand
                 </li>
             </ol>
         </nav>
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h5 class="fw-semibold mb-0">Categories List</h5>
+                    <h5 class="fw-semibold mb-0">Brand List</h5>
                     <a href="#" class="btn btn-primary">
-                        <i class="bi bi-plus-lg"></i> Add Categories
+                        <i class="bi bi-plus-lg"></i> Add Brand
                     </a>
                 </div>
                 <div class="table-responsive">
@@ -31,46 +31,49 @@
                             <tr>
                                 <th style="width: 60px">#</th>
                                 <th style="width: 120px">Icon</th>
-                                <th>Nama Category</th>
+                                <th>Nama brand</th>
                                 <th style="width: 150px">Dibuat</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($categories as $index => $category)
+                            @forelse ($brands as $index => $item)
                                 <tr>
                                     <td>
-                                        {{ $categories->firstItem() + $index }}
+                                        {{ $brands->firstItem() + $index }}
                                     </td>
+
                                     <td class="text-center">
-                                        @if ($category->photo_url)
-                                            <img src="{{ $category->photo_url }}" alt="{{ $category->name }}"
+                                        @if ($item->photo_url)
+                                            <img src="{{ $item->photo_url }}" alt="{{ $item->name }}"
                                                 style="height:40px; object-fit:contain;">
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
+
                                     <td>
-                                        {{ $category->name }}
+                                        {{ $item->name }}
                                     </td>
+
                                     <td>
-                                        {{ $category->created_at->format('d M Y') }}
+                                        {{ $item->created_at->format('d M Y') }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
                                     <td colspan="4" class="text-center text-muted">
-                                        Data category kosong
+                                        Tidak ada data brand
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
+                    {{ $brands->links('pagination::bootstrap-5') }}
                 </div>
-
-                {{ $categories->links('pagination::bootstrap-5') }}
             </div>
-
         </div>
 
+
+      
     </div>
 @endsection

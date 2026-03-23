@@ -12,7 +12,7 @@
         html,
         body {
             height: 100%;
-            font-family: 'Poppins', sans-serif !important;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         /* Wrapper */
@@ -29,10 +29,13 @@
             left: 0;
             height: 100vh;
             width: 240px;
-            background: #A0DAA9;
+            background: #fff;
             color: #4D4D4D;
             transition: width 0.3s;
             z-index: 1030;
+
+            border-right: 1px dashed #ccc;
+            /* garis putus-putus */
         }
 
         .sidebar-offcanvas {
@@ -127,8 +130,8 @@
         }
 
         .nav-link-custom.active {
-            background-color: #e7f1ff;
-            color: #0d6efd;
+            background-color: #00f;
+            color: #00f;
             font-weight: 600;
         }
 
@@ -189,7 +192,6 @@
             z-index: 1020;
             height: 56px;
             background: #fff;
-            border-bottom: 1px dashed #dee2e6;
             display: flex;
             align-items: center;
             padding: 0 16px;
@@ -220,8 +222,8 @@
         }
 
         .sidebar .nav-link.active {
-            background: #f8f9fa;
-            color: #4D4D4D;
+            background: #E7E7FE;
+            color: #696CFF;
             font-weight: 600;
             border-top-left-radius: 12px;
             border-bottom-left-radius: 12px;
@@ -229,9 +231,10 @@
         }
 
         .sidebar .nav-link.active i {
-            color: #4D4D4D;
+            color: #696CFF;
         }
-
+    </style>
+    <style>
         @media (max-width: 768px) {
 
             /* Sembunyikan sidebar */
@@ -268,6 +271,81 @@
             }
         }
     </style>
+    {{-- Breadcrumb --}}
+    <style>
+        .custom-breadcrumb {
+            background: #f1f3ff;
+            padding: 10px 14px;
+            border-radius: 10px;
+        }
+
+        /* link */
+        .breadcrumb-link {
+            color: #696CFF;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+        }
+
+        /* separator */
+        .breadcrumb-item+.breadcrumb-item::before {
+            color: #999;
+        }
+
+        /* active */
+        .breadcrumb-item.active {
+            color: #333;
+            font-weight: 600;
+        }
+    </style>
+    <style>
+        .gamer-header {
+            position: relative;
+            padding: 15px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        /* LED RGB HALUS TANPA GAP */
+        .gamer-header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+
+            background: linear-gradient(90deg,
+                    #ff0000,
+                    #ff7f00,
+                    #ffff00,
+                    #00ff00,
+                    #00ffff,
+                    #0000ff,
+                    #8b00ff,
+                    #ff0000);
+
+            background-size: 300% 100%;
+            animation: rgbFlow 6s linear infinite;
+
+            filter: blur(0.8px);
+            /* glow halus */
+        }
+
+        /* ANIMASI HALUS */
+        @keyframes rgbFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 300% 50%;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -290,9 +368,9 @@
         <div class="wrapper">
 
             <aside id="sidebar" class="sidebar">
-                <div class="sidebar-header">
+                <div class="sidebar-header gamer-header">
                     <span class="sidebar-text fw-bold">
-                        <i class="bi bi-pc-display-horizontal"></i> ZK Komputer
+                        <i class="bi bi-pc-display-horizontal"></i> ZK Admin Panel
                     </span>
                     <span class="sidebar-icon">
                         <i class="bi bi-pc-display-horizontal"></i>
@@ -319,7 +397,6 @@
                         <button id="toggleSidebar" class="btn btn-light btn-sm d-none d-md-inline">
                             <i class="bi bi-list"></i>
                         </button>
-                        <div id="clock" class="fw-semibold text-dark small"></div>
                     </div>
                     <!-- RIGHT -->
                     <div class="d-flex align-items-center justify-content-between px-3 py-2">
@@ -409,12 +486,13 @@
                     </div>
                 </div>
 
-                <div class="main-content bg-light">
+                <div class="main-content" style="background-color: #F8F9FA">
                     <div class="container-fluid px-5">
                         @yield('content')
-                    </div>
-                </div>
 
+                    </div>
+
+                </div>
                 {{-- <x-footer /> --}}
             </div>
 
@@ -439,51 +517,6 @@
                 sidebar.classList.contains('collapsed')
             );
         });
-        const btnFullscreen = document.getElementById('btnFullscreen');
-
-        btnFullscreen.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                // Masuk fullscreen
-                document.documentElement.requestFullscreen().catch((err) => {
-                    console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-                });
-            } else {
-                // Keluar fullscreen
-                document.exitFullscreen();
-            }
-        });
-    </script>
-    <script>
-        function updateClock() {
-            const now = new Date();
-
-            const options = {
-                timeZone: 'Asia/Jakarta',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-            };
-
-            const time = new Intl.DateTimeFormat('id-ID', options).format(now);
-            const date = now.toLocaleDateString('id-ID', {
-                weekday: 'long',
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric',
-                timeZone: 'Asia/Jakarta'
-            });
-
-            const clockEl = document.getElementById('clock');
-            if (clockEl) {
-                clockEl.innerHTML = `
-            <div>${date}</div>
-            <div class="text-muted">${time} WIB</div>
-        `;
-            }
-        }
-
-        setInterval(updateClock, 1000);
-        updateClock();
     </script>
 
 </html>

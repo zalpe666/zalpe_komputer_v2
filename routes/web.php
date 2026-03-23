@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardBrandController;
 use App\Http\Controllers\DashboardCategoriesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
@@ -10,8 +11,10 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'role:master,admin'])->prefix('dashboard')->as('admin.')->group(function () {
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
-        Route::get('/categories',[DashboardCategoriesController::class,'index'])->name('categories.index');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/categories', [DashboardCategoriesController::class, 'index'])->name('categories.index');
+    Route::get('/brand', [DashboardBrandController::class, 'index'])->name('brand.index');
+    Route::get('/product', [DashboardBrandController::class, 'index'])->name('brand.index');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -25,4 +28,4 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:cashier'])->group(function () {
     // TODO: cashier routes
 });
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
