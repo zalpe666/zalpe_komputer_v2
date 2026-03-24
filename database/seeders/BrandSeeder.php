@@ -53,6 +53,7 @@ class BrandSeeder extends Seeder
             ['name' => 'WDC', 'photo_url' => 'https://enterkomputer.com/web-assets/frontend/brand/wdc.png'],
             ['name' => 'XFX', 'photo_url' => 'https://enterkomputer.com/web-assets/frontend/brand/xfx.png'],
             ['name' => 'Zotac', 'photo_url' => 'https://enterkomputer.com/web-assets/frontend/brand/zotac.png'],
+            ['name' => 'Digital', 'photo_url' => 'https://enterkomputer.com/web-assets/frontend/brand/zotac.png'],
         ];
 
         // Memasukkan timestamp untuk setiap baris

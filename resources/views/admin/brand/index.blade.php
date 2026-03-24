@@ -20,8 +20,11 @@
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h5 class="fw-semibold mb-0">Brand List</h5>
-                    <a href="#" class="btn btn-primary">
+                    <div>
+                        <h3 class="fw-semibold mb-1">Brand List</h3>
+                        <p class="text-muted">Manage all available brands in your store</p>
+                    </div>
+                    <a href="#" class="btn btn-primary rounded-4">
                         <i class="bi bi-plus-lg"></i> Add Brand
                     </a>
                 </div>
@@ -74,6 +77,6 @@
         </div>
 
 
-      
+
     </div>
 @endsection

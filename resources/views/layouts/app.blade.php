@@ -14,7 +14,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="/">Zalpe Komputer</a>
+            <a class="navbar-brand" href="/">Zalpe lorem</a>
 
             <ul class="navbar-nav ms-auto">
                 @auth

@@ -225,9 +225,13 @@
             background: #E7E7FE;
             color: #696CFF;
             font-weight: 600;
+
             border-top-left-radius: 12px;
             border-bottom-left-radius: 12px;
             margin-left: 5px;
+
+            border-right: 4px solid #696CFF;
+            /* 🔥 ini yang kamu mau */
         }
 
         .sidebar .nav-link.active i {
@@ -497,6 +501,7 @@
             </div>
 
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         @stack('scripts')
     </body>
     <script>

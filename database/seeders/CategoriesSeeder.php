@@ -47,6 +47,7 @@ class CategoriesSeeder extends Seeder
             ['name' => 'Drawer', 'photo_url' => 'https://enterkomputer.com/web-assets/frontend/icon/svg/category/drawingtablet.svg'],
             ['name' => 'Gadget', 'photo_url' => 'https://enterkomputer.com/web-assets/frontend/icon/svg/category/gadget.svg'],
             ['name' => 'Notebook Accessories', 'photo_url' => 'https://enterkomputer.com/web-assets/frontend/icon/svg/category/notebook-accessories.svg'],
+            ['name' => 'Digital', 'photo_url' => 'https://enterkomputer.com/web-assets/frontend/icon/svg/category/notebook-accessories.svg'],
         ];
 
         // Tambahkan timestamp untuk setiap baris

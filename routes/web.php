@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardBrandController;
 use App\Http\Controllers\DashboardCategoriesController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,7 +15,12 @@ Route::middleware(['auth', 'role:master,admin'])->prefix('dashboard')->as('admin
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/categories', [DashboardCategoriesController::class, 'index'])->name('categories.index');
     Route::get('/brand', [DashboardBrandController::class, 'index'])->name('brand.index');
-    Route::get('/product', [DashboardBrandController::class, 'index'])->name('brand.index');
+    Route::get('/product', [DashboardProductController::class, 'index'])->name('product.index');
+    Route::get('/product/create', [DashboardProductController::class, 'create'])->name('product.create');
+    Route::post('/product/store', [DashboardProductController::class, 'store'])->name('product.store');
+    Route::get('/product/edit/{id}', [DashboardProductController::class, 'edit'])->name('product.edit');
+    Route::post('/product/update/{id}', [DashboardProductController::class, 'update'])->name('product.update');
+    Route::post('/product/delete/{id}', [DashboardProductController::class, 'destroy'])->name('product.delete');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
