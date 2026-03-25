@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardBrandController;
 use App\Http\Controllers\DashboardCategoriesController;
 use App\Http\Controllers\DashboardController;
@@ -33,5 +34,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 Route::middleware(['auth', 'role:cashier'])->group(function () {
     // TODO: cashier routes
+});
+Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->group(function () {
+    Route::get('/', [CustomerController::class, 'index'])->name('home.index');
+
 });
 require __DIR__ . '/auth.php';
