@@ -48,6 +48,12 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => 'customer',
                 'is_active' => true,
+            ], [
+                'name' => 'Zalpe Rabbani',
+                'email' => 'zalpe@gmail.com',
+                'password' => Hash::make('password'),
+                'role' => 'customer',
+                'is_active' => true,
             ],
         ]);
     }

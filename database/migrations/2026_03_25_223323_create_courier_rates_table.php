@@ -11,11 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('carts', function (Blueprint $table) {
+        Schema::create('courier_rates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->integer('pcs')->default(1);
+            $table->foreignId('district_id')->constrained()->cascadeOnDelete();
+
+            $table->string('name'); // JNE, SiCepat dll
+            $table->string('service'); // Reguler, YES dll
+
+            $table->integer('price_per_kg');
+            $table->string('estimated_delivery_time');
+
             $table->timestamps();
         });
     }
@@ -25,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('carts');
+        Schema::dropIfExists('courier_rates');
     }
 };

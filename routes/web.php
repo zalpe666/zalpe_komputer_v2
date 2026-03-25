@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CustomerAddressController;
+use App\Http\Controllers\CustomerCartController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardBrandController;
 use App\Http\Controllers\DashboardCategoriesController;
@@ -37,6 +39,17 @@ Route::middleware(['auth', 'role:cashier'])->group(function () {
 });
 Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->group(function () {
     Route::get('/', [CustomerController::class, 'index'])->name('home.index');
+    Route::get('/cart', [CustomerCartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{id}', [CustomerCartController::class, 'addToCart'])->name('cart.add');
+    Route::post('/cart/update/{id}', [CustomerCartController::class, 'updateCart'])->name('cart.update');
+    Route::delete('/cart/remove/{id}', [CustomerCartController::class, 'removeCart'])->name('cart.remove');
 
+    Route::get('/addresses', [CustomerAddressController::class, 'index'])->name('address.index');
+    Route::get('/addresses/create', [CustomerAddressController::class, 'create'])->name('address.create');
+    Route::post('/addresses', [CustomerAddressController::class, 'store'])->name('address.store');
+
+    // dropdown dinamis
+    Route::get('/cities/{province}', [CustomerAddressController::class, 'getCities']);
+    Route::get('/districts/{city}', [CustomerAddressController::class, 'getDistricts']);
 });
 require __DIR__ . '/auth.php';

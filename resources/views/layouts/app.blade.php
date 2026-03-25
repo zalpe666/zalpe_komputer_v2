@@ -13,7 +13,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand text-success fw-bold" href="#">Zalpe Komputer</a>
+            <a class="navbar-brand text-success fw-bold" href="{{ route('customer.home.index') }}">Zalpe Komputer</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -30,7 +30,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Cart</a>
+                            <a class="nav-link" href="{{ route('customer.cart.index') }}">Cart</a>
                         </li>
                     @endauth
 
@@ -44,6 +44,9 @@
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
                                     <a class="dropdown-item" href="#">Profile</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('customer.address.index') }}">Address</a>
                                 </li>
 
                                 <li>
@@ -95,7 +98,20 @@
     <div class="container py-4">
         @yield('content')
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+            });
+        </script>
+    @endif
 </body>
 
 </html>
