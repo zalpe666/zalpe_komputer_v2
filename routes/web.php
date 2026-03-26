@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\CustomerAddressController;
 use App\Http\Controllers\CustomerCartController;
+use App\Http\Controllers\CustomerCheckoutController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomerCourierController;
 use App\Http\Controllers\DashboardBrandController;
 use App\Http\Controllers\DashboardCategoriesController;
 use App\Http\Controllers\DashboardController;
@@ -43,7 +45,9 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::post('/cart/add/{id}', [CustomerCartController::class, 'addToCart'])->name('cart.add');
     Route::post('/cart/update/{id}', [CustomerCartController::class, 'updateCart'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CustomerCartController::class, 'removeCart'])->name('cart.remove');
-
+    Route::get('/checkout', [CustomerCheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CustomerCheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/couriers/{district_id}', [CustomerCourierController::class, 'getByDistrict']);
     Route::get('/addresses', [CustomerAddressController::class, 'index'])->name('address.index');
     Route::get('/addresses/create', [CustomerAddressController::class, 'create'])->name('address.create');
     Route::post('/addresses', [CustomerAddressController::class, 'store'])->name('address.store');

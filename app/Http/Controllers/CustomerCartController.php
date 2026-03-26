@@ -39,19 +39,21 @@ class CustomerCartController extends Controller
     }
     public function updateCart(Request $request, $id)
     {
-        $cart = Cart::findOrFail($id);
+        $cart = Cart::where('user_id', auth()->id())
+            ->findOrFail($id);
 
-        if ($request->action == 'plus') {
+        if ($request->action === 'plus') {
             $cart->increment('pcs');
-        } elseif ($request->action == 'minus') {
+        } elseif ($request->action === 'minus') {
             if ($cart->pcs > 1) {
                 $cart->decrement('pcs');
             }
         }
 
-        return back();
+        return response()->json([
+            'qty' => $cart->pcs
+        ]);
     }
-
     public function removeCart($id)
     {
         Cart::findOrFail($id)->delete();
