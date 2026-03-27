@@ -21,7 +21,7 @@
                         <h3 class="fw-semibold mb-1">Product List</h3>
                         <p class="text-muted">View, add, edit, or delete products</p>
                     </div>
-                    <a href="{{ route('admin.product.create') }}" class="btn btn-primary rounded-4">
+                    <a href="{{ route('admin.product.create') }}" class="btn btn-outline-primary rounded-4">
                         <i class="bi bi-plus-lg"></i> Add Product
                     </a>
                 </div>
