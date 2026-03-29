@@ -5,11 +5,13 @@ use App\Http\Controllers\CustomerCartController;
 use App\Http\Controllers\CustomerCheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerCourierController;
+use App\Http\Controllers\CustomerTransactionController;
 use App\Http\Controllers\DashboardBrandController;
 use App\Http\Controllers\DashboardCategoriesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardProductController;
 use App\Http\Controllers\DashboardTransactionController;
+use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +33,7 @@ Route::middleware(['auth', 'role:master,admin'])->prefix('dashboard')->as('admin
     Route::get('/transaction', [DashboardTransactionController::class, 'index'])->name('transaction.index');
     Route::get('/transaction-today', [DashboardTransactionController::class, 'today'])->name('transaction.today');
     Route::get('/transaction/{id}', [DashboardTransactionController::class, 'show'])->name('transaction.show');
+    Route::put('/transaction/{id}/status', [DashboardTransactionController::class, 'updateStatus'])->name('transaction.updateStatus');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -57,10 +60,17 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::get('/addresses/create', [CustomerAddressController::class, 'create'])->name('address.create');
     Route::post('/addresses', [CustomerAddressController::class, 'store'])->name('address.store');
 
+    Route::get('/transaction', [CustomerTransactionController::class, 'index'])->name('transaction.index');
+    Route::get('/transaction/{id}', [CustomerTransactionController::class, 'show'])->name('transaction.show');
+    Route::get('/transaction/{id}/payment', [CustomerTransactionController::class, 'payment'])->name('transaction.payment');
+
+
 
 
     // dropdown dinamis
     Route::get('/cities/{province}', [CustomerAddressController::class, 'getCities']);
     Route::get('/districts/{city}', [CustomerAddressController::class, 'getDistricts']);
 });
+
+Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
 require __DIR__ . '/auth.php';

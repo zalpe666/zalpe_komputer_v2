@@ -13,7 +13,7 @@ class DashboardTransactionController extends Controller
     {
         $transactions = Transaction::with(['user', 'address'])
             ->orderBy('created_at', 'desc')
-            ->paginate(5);
+            ->paginate(25);
 
         return view('admin.transaction.index', compact('transactions'));
     }
@@ -23,7 +23,7 @@ class DashboardTransactionController extends Controller
         $transactions = Transaction::with(['user', 'address'])
             ->whereDate('created_at', Carbon::today()) // filter hanya transaksi hari ini
             ->orderBy('created_at', 'desc')
-            ->paginate(5);
+            ->paginate(25);
 
         return view('admin.transaction.today', compact('transactions'));
     }
@@ -36,9 +36,26 @@ class DashboardTransactionController extends Controller
         $transaction = Transaction::with([
             'user',
             'address',
-            'details.product' // ambil product di detail
+            'transactionDetails.product' // ambil product di detail
         ])->findOrFail($id);
 
         return view('admin.transaction.show', compact('transaction'));
+    }
+    public function updateStatus(Request $request, $id)
+    {
+        $transaction = Transaction::findOrFail($id);
+
+        $status = $request->status;
+
+        // validasi biar aman
+        if (!in_array($status, ['Packing', 'Sending', 'Delivered'])) {
+            return back()->with('error', 'Status tidak valid');
+        }
+
+        $transaction->update([
+            'transaction_status' => $status
+        ]);
+
+        return back()->with('success', 'Status berhasil diupdate');
     }
 }

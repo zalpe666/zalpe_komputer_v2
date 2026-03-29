@@ -31,7 +31,7 @@ return new class extends Migration
 
             // 💳 pembayaran
             $table->string('payment_method')->nullable();
-            $table->enum('status', ['Pending', 'Paid', 'Packing', 'Sending', 'Completed', 'Cancelled'])->default('pending');
+            $table->enum('transaction_status', ['Pending', 'Paid', 'Packing', 'Sending','Delivered','Completed','Cancelled'])->default('pending');
             $table->string('notes')->nullable();
             $table->string('snap_token')->nullable(); // Midtrans
 

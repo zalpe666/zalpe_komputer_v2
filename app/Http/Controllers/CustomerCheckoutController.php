@@ -104,7 +104,7 @@ class CustomerCheckoutController extends Controller
 
             return response()->json([
                 'success' => true,
-                'redirect' => route('customer.home.index')
+                'redirect' => route('customer.transaction.index')
             ]);
         } catch (\Exception $e) {
             return response()->json([

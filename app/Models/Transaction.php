@@ -18,6 +18,8 @@ class Transaction extends Model
         'estimated_delivery',
         'payment_method',
         'payment_status',
+        'transaction_status',
+        'notes',
         'snap_token',
         'transaction_type'
     ];
@@ -37,9 +39,9 @@ class Transaction extends Model
     }
 
     // ke detail (items)
-    public function details()
+    public function transactionDetails()
     {
-        return $this->hasMany(TransactionDetail::class);
+        return $this->hasMany(\App\Models\TransactionDetail::class);
     }
     protected $casts = [
         'subtotal' => 'integer',

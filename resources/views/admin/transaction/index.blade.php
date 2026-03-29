@@ -17,7 +17,7 @@
             <td>{{ $t->invoice }}</td>
             <td>{{ $t->user->name }}</td>
             <td>Rp {{ number_format($t->total) }}</td>
-            <td>{{ $t->status }}</td>
+            <td>{{ $t->transaction_status }}</td>
             <td>
                 <a href="{{ route('admin.transaction.show', $t->id) }}" class="btn btn-sm btn-primary">Detail</a>
             </td>

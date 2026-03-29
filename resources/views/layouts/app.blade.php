@@ -43,6 +43,9 @@
 
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
+                                    <a class="dropdown-item" href="{{ route('customer.transaction.index') }}">Transaction</a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" href="#">Profile</a>
                                 </li>
                                 <li>

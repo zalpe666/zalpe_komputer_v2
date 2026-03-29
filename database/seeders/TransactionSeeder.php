@@ -17,7 +17,12 @@ class TransactionSeeder extends Seeder
      */
     public function run()
     {
-        $users = User::with('addresses')->get();
+        $users = User::with('addresses')
+            ->where('role', 'customer')
+            ->get()
+            ->filter(function ($user) {
+                return $user->addresses->isNotEmpty();
+            });
         $products = Product::all();
 
         // ========================
@@ -31,7 +36,7 @@ class TransactionSeeder extends Seeder
         // 30 transaksi acak max 7 hari ke belakang
         // ========================
         for ($i = 0; $i < 30; $i++) {
-            $randomDate = Carbon::now()->subDays(rand(0, 7))->setTime(rand(0,23), rand(0,59), rand(0,59));
+            $randomDate = Carbon::now()->subDays(rand(0, 7))->setTime(rand(0, 23), rand(0, 59), rand(0, 59));
             $this->createTransaction($users, $products, $randomDate);
         }
     }
@@ -72,7 +77,7 @@ class TransactionSeeder extends Seeder
             'courier_service' => 'Reguler',
             'estimated_delivery' => '2-3 Hari',
             'payment_method' => $payment_method,
-            'status' => "Paid",
+            'transaction_status' => "Paid",
             'notes' => null,
             'snap_token' => null,
             'transaction_type' => 'Online',
