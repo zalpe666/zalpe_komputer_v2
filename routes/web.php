@@ -5,6 +5,7 @@ use App\Http\Controllers\CustomerCartController;
 use App\Http\Controllers\CustomerCheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerCourierController;
+use App\Http\Controllers\CustomerRatingController;
 use App\Http\Controllers\CustomerTransactionController;
 use App\Http\Controllers\DashboardBrandController;
 use App\Http\Controllers\DashboardCategoriesController;
@@ -65,8 +66,8 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::get('/transaction/{id}/payment', [CustomerTransactionController::class, 'payment'])->name('transaction.payment');
     Route::put('/transaction/{id}/complete', [CustomerTransactionController::class, 'markAsCompleted'])->name('transaction.complete');
     Route::put('/transaction/{id}/cancel', [CustomerTransactionController::class, 'cancel'])->name('transaction.cancel');
-    Route::get('/transaction/{transaction}/product/{product}/rate', [CustomerTransactionController::class, 'showRateForm'])->name('transaction.rate.form');
-    Route::post('/transaction/{transaction}/product/{product}/rate', [CustomerTransactionController::class, 'submitRate'])->name('transaction.rate.submit');
+    Route::get('/transaction/{transaction}/product/{product}/rate', [CustomerRatingController::class, 'index'])->name('transaction.rate.form');
+    Route::post('/transaction/{transaction}/product/{product}/rate', [CustomerRatingController::class, 'store'])->name('transaction.rate.submit');
 
 
 
