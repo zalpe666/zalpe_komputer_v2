@@ -5,7 +5,8 @@
     <p>User: {{ $transaction->user->name }}</p>
     <p>Address: {{ $transaction->address->address }}, {{ $transaction->address->city->name ?? '' }}</p>
     <p>Total: Rp {{ number_format($transaction->total) }}</p>
-    <p>Status: {{ $transaction->transaction_status }}</p>
+    <p>TRX Status: {{ $transaction->transaction_status }}</p>
+    <p>Payment Status: {{ $transaction->payment_status }}</p>
 
     <form action="{{ route('admin.transaction.updateStatus', $transaction->id) }}" method="POST" class="d-flex gap-2">
         @csrf

@@ -41,6 +41,7 @@ return new class extends Migration
             $table->integer('stock')->default(0);
             $table->integer('views')->default(0);
             $table->integer('sold')->default(0);
+            $table->decimal('rating', 3, 2)->default(0);
 
             $table->boolean('is_active')->default(true);
 

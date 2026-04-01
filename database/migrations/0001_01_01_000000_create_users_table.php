@@ -29,7 +29,8 @@ return new class extends Migration
 
             // STATUS AKUN
             $table->boolean('is_active')->default(true);
-
+            $table->string('ktp_number')->nullable(); // nomor KTP dummy
+            $table->timestamp('ktp_verified_at')->nullable(); // kapan verifikasi
             $table->rememberToken();
             $table->timestamps();
         });

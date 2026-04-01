@@ -47,14 +47,26 @@ class DashboardTransactionController extends Controller
 
         $status = $request->status;
 
-        // validasi biar aman
         if (!in_array($status, ['Packing', 'Sending', 'Delivered'])) {
             return back()->with('error', 'Status tidak valid');
         }
 
-        $transaction->update([
-            'transaction_status' => $status
-        ]);
+        $transaction->transaction_status = $status;
+
+        // ⬇️ isi tanggal sesuai status
+        if ($status === 'Sending') {
+            if (!$transaction->sending_date) {
+                $transaction->sending_date = now();
+            }
+        }
+
+        if ($status === 'Delivered') {
+            if (!$transaction->delivered_date) {
+                $transaction->delivered_date = now();
+            }
+        }
+
+        $transaction->save();
 
         return back()->with('success', 'Status berhasil diupdate');
     }

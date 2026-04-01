@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LocationSeeder::class);
         $this->call(CourierRateSeeder::class);
         $this->call(AddressDummySeeder::class);
-        $this->call(TransactionSeeder::class);
+        // $this->call(TransactionSeeder::class);
     
     }
 }

@@ -9,6 +9,8 @@ class TransactionDetail extends Model
     protected $fillable = [
         'transaction_id',
         'product_id',
+        'rating',
+        'review',
         'price',
         'qty',
         'total'

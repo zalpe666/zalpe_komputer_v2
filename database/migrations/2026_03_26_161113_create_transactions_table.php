@@ -31,10 +31,15 @@ return new class extends Migration
 
             // 💳 pembayaran
             $table->string('payment_method')->nullable();
-            $table->enum('transaction_status', ['Pending', 'Paid', 'Packing', 'Sending','Delivered','Completed','Cancelled'])->default('pending');
+            $table->enum('payment_status', ['Pending', 'Unpaid', 'Paid', 'Refunded'])->default('pending');
+            $table->enum('transaction_status', ['Pending', 'Waiting Payment', 'Packing', 'Sending', 'Delivered', 'Completed', 'Cancelled'])->default('pending');
             $table->string('notes')->nullable();
             $table->string('snap_token')->nullable(); // Midtrans
 
+            $table->timestamp('payment_date')->nullable();
+            $table->timestamp('sending_date')->nullable();
+            $table->timestamp('delivered_date')->nullable();
+            $table->timestamp('canceled_date')->nullable();
             $table->timestamps();
         });
     }

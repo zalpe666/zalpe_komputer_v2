@@ -20,6 +20,10 @@ class Transaction extends Model
         'payment_status',
         'transaction_status',
         'notes',
+        'sending_date',
+        'payment_date',
+        'delivered_date',
+        'canceled_date',
         'snap_token',
         'transaction_type'
     ];

@@ -11,13 +11,16 @@
                     <div class="col-md-3 mb-4">
                         <div class="card h-100">
 
-                            <img src="{{$product->image}}" class="card-img-top">
+                            <img src="{{ $product->image }}" class="card-img-top">
 
                             <div class="card-body d-flex flex-column">
                                 <h6 class="fw-bold">{{ $product->name }}</h6>
 
                                 <small class="text-muted">
                                     {{ $product->brand->name ?? '-' }}
+                                </small>
+                                <small class="text-muted">
+                                   Rating :  {{ $product->rating?? '-' }}
                                 </small>
 
                                 <div class="mt-2 mb-3">
@@ -39,7 +42,8 @@
 
                                 {{-- BUTTON --}}
                                 @auth
-                                    <form action="{{ route('customer.cart.add', $product->id) }}" method="POST" class="mt-auto">
+                                    <form action="{{ route('customer.cart.add', $product->id) }}" method="POST"
+                                        class="mt-auto">
                                         @csrf
                                         <button class="btn btn-success w-100" {{ $product->is_out_of_stock ? 'disabled' : '' }}>
                                             Add to Cart

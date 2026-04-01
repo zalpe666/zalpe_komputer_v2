@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('transaction_details', function (Blueprint $table) {
+        Schema::create('transaction_details', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('transaction_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-
+            $table->string('status')->default('pending');
+            $table->unsignedTinyInteger('rating')->nullable(); // 1-5
+            $table->text('review')->nullable();
             $table->integer('price'); // harga saat checkout
             $table->integer('qty');
             $table->integer('total');

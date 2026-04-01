@@ -26,7 +26,12 @@ class MidtransController extends Controller
         switch ($payload['transaction_status']) {
             case 'capture':
             case 'settlement':
-                $transaction->transaction_status = 'Paid';
+                if (!$transaction->payment_date) {
+                    $transaction->payment_date = $payload['settlement_time'] ?? now();
+                }
+
+                $transaction->transaction_status = 'Packing';
+                $transaction->payment_status = 'Paid';
                 break;
 
             case 'pending':

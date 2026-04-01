@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Address;
 use App\Models\Cart;
+
 use App\Models\CourierRate;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
@@ -15,19 +16,11 @@ class CustomerCheckoutController extends Controller
     public function index(Request $request)
     {
         $cartIds = array_map('intval', explode(',', $request->carts));
-
-        $carts = Cart::with('product')
-            ->whereIn('id', $cartIds)
-            ->where('user_id', auth()->id())
-            ->get();
-
+        $carts = Cart::with('product')->whereIn('id', $cartIds)->where('user_id', auth()->id())->get();
         if ($carts->count() !== count($cartIds)) {
-            return redirect()->route('customer.cart.index')
-                ->with('error', 'Cart tidak valid');
+            return redirect()->route('customer.cart.index')->with('error', 'Cart tidak valid');
         }
-
         $addresses = Address::where('user_id', auth()->id())->get();
-
         return view('customer.checkout.index', compact('carts', 'addresses'));
     }
 
@@ -68,7 +61,9 @@ class CustomerCheckoutController extends Controller
                     'subtotal' => $subtotal,
                     'shipping_cost' => $shipping,
                     'total' => $total,
-                    'payment_method' => $request->payment_method, // 🔥 baru
+                    'payment_method' => $request->payment_method,
+                    'payment_status' => 'Unpaid',
+                    'transaction_status' => 'Waiting Payment',
                     'courier_name' => $request->courier_name,
                     'courier_service' => $request->courier_service,
                     'estimated_delivery' => $request->estimated_delivery,

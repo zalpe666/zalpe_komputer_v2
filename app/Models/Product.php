@@ -22,8 +22,9 @@ class Product extends Model
         'weight',
         'description',
         'stock',
-        'is_active'
-    ];  
+        'is_active',
+        'rating',
+    ];
 
     protected $casts = [
         'is_digital' => 'boolean',
@@ -71,5 +72,9 @@ class Product extends Model
     public function getIsOutOfStockAttribute()
     {
         return $this->stock <= 0;
+    }
+    public function transactionDetails()
+    {
+        return $this->hasMany(TransactionDetail::class);
     }
 }

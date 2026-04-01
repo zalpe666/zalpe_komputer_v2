@@ -54,4 +54,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Address::class);
     }
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    public function walletTransactions()
+    {
+        return $this->hasManyThrough(WalletTransaction::class, Wallet::class);
+    }
 }
