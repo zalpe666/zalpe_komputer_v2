@@ -40,48 +40,53 @@ class CustomerCheckoutController extends Controller
         try {
             DB::transaction(function () use ($carts, $request, $cartIds, &$transaction) {
 
-                // 💰 hitung subtotal
-                $subtotal = $carts->sum(fn($c) => $c->product->final_price * $c->pcs);
+                // 💰 hitung subtotal dan total diskon merchant
+                $subtotal = 0;
+                $total_discount = 0;
+
+                foreach ($carts as $cart) {
+                    $product = $cart->product;
+
+                    $subtotal += $product->default_price * $cart->pcs;
+                    $total_discount += ($product->default_price - $product->final_price) * $cart->pcs;
+                }
 
                 // 🚚 ongkir dari request
                 $shipping = $request->shipping_cost;
+                $total = $subtotal + $shipping - $total_discount;
 
-                $total = $subtotal + $shipping;
-
-                $date = date('dmY');       // tgl sekarang
-                $time = date('His');        // jam-menit-detik sekarang
-                $randomCode = rand(100, 999); // angka random
+                $date = date('dmY');
+                $time = date('His');
+                $randomCode = rand(100, 999);
                 $invoice = "ZK/{$date}/{$time}/{$randomCode}";
+
                 // 🔥 SIMPAN TRANSACTION
                 $transaction = Transaction::create([
-                    'invoice' => $invoice, // simpan invoice
+                    'invoice' => $invoice,
                     'user_id' => auth()->id(),
                     'address_id' => $request->address_id,
-
                     'subtotal' => $subtotal,
                     'shipping_cost' => $shipping,
                     'total' => $total,
+                    'discount_by_merchant' => $total_discount, // <--- simpan total diskon di sini
                     'payment_method' => $request->payment_method,
                     'payment_status' => 'Unpaid',
                     'transaction_status' => 'Waiting Payment',
                     'courier_name' => $request->courier_name,
                     'courier_service' => $request->courier_service,
                     'estimated_delivery' => $request->estimated_delivery,
-
                     'status' => 'pending',
                     'transaction_type' => 'Transaction',
                 ]);
 
                 // 🔥 SIMPAN DETAIL & KURANGI STOCK
                 foreach ($carts as $cart) {
-
                     $product = $cart->product;
 
                     if ($product->stock < $cart->pcs) {
                         throw new \Exception("Stock tidak cukup untuk {$product->name}");
                     }
 
-                    // kurangi stock produk
                     $product->decrement('stock', $cart->pcs);
 
                     TransactionDetail::create([

@@ -25,7 +25,9 @@ class Transaction extends Model
         'delivered_date',
         'canceled_date',
         'snap_token',
-        'transaction_type'
+        'transaction_type',
+        'discount_by_merchant',
+        'discount_by_voucher',
     ];
 
     // 🔥 RELATION

@@ -30,7 +30,7 @@
 
                                     @if ($product->discount > 0)
                                         <small class="text-decoration-line-through text-muted">
-                                            Rp {{ number_format($product->price) }}
+                                            Rp {{ number_format($product->default_price) }}
                                         </small>
                                     @endif
                                 </div>

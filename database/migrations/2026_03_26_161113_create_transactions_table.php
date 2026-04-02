@@ -22,6 +22,8 @@ return new class extends Migration
             // 💰 harga
             $table->integer('subtotal');
             $table->integer('shipping_cost');
+            $table->integer('discount_by_merchant')->default(0);
+            $table->integer('discount_by_voucher')->default(0);
             $table->integer('total');
 
             // 🚚 pengiriman

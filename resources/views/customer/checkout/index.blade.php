@@ -14,21 +14,24 @@
                     <div class="card mb-3">
                         <div class="card-body d-flex align-items-center">
 
+                            {{-- Gambar produk --}}
                             <img src="{{ $cart->product->image }}" width="80" class="me-3">
 
                             <div class="flex-grow-1">
                                 <h6 class="mb-1">{{ $cart->product->name }}</h6>
 
+                                {{-- Harga final per produk --}}
                                 <small class="text-muted">
                                     Rp {{ number_format($cart->product->final_price) }}
                                 </small>
 
+                                {{-- Qty --}}
                                 <div class="mt-2">
                                     Qty: <strong>{{ $cart->pcs }}</strong>
                                 </div>
                             </div>
 
-                            {{-- SUBTOTAL --}}
+                            {{-- Subtotal per item --}}
                             <div class="text-end">
                                 <div class="fw-bold text-success">
                                     Rp {{ number_format($cart->product->final_price * $cart->pcs) }}
@@ -48,7 +51,6 @@
                             <div class="border p-3 mb-2 rounded">
                                 <input type="radio" name="address_id" value="{{ $address->id }}"
                                     data-district="{{ $address->district_id }}">
-
                                 <strong>{{ $address->name }}</strong> ({{ $address->phone }}) <br>
                                 {{ $address->address }} <br>
                                 {{ $address->city->name ?? '' }}, {{ $address->province->name ?? '' }}
@@ -58,11 +60,13 @@
                                 Belum ada alamat
                             </div>
                         @endforelse
+
                         <div id="courier-list">
                             <small class="text-muted">Pilih alamat dulu</small>
                         </div>
                     </div>
                 </div>
+
                 {{-- 📍 PILIH PAYMENT METHOD --}}
                 <div class="card mt-4">
                     <div class="card-body">
@@ -125,15 +129,17 @@
                         <h5 class="mb-3">Summary</h5>
 
                         @php
-                            $subtotal = 0;
-                            foreach ($carts as $cart) {
-                                $subtotal += $cart->product->final_price * $cart->pcs;
-                            }
+                            $subtotal = $carts->sum(fn($c) => $c->product->default_price * $c->pcs);
+                            $discount_by_merchant = $carts->sum(fn($c) => ($c->product->default_price - $c->product->final_price) * $c->pcs);
+
                         @endphp
 
                         <div class="d-flex justify-content-between">
                             <span>Subtotal</span>
                             <strong>Rp {{ number_format($subtotal) }}</strong>
+                        </div> <div class="d-flex justify-content-between">
+                            <span>Discount</span>
+                            <strong>Rp {{ number_format($discount_by_merchant) }}</strong>
                         </div>
 
                         <div class="d-flex justify-content-between mt-2">
@@ -145,7 +151,7 @@
 
                         <div class="d-flex justify-content-between">
                             <span>Total</span>
-                            <strong id="total">Rp {{ number_format($subtotal) }}</strong>
+                            <strong id="total">Rp {{ number_format($subtotal - $discount_by_merchant) }}</strong>
                         </div>
 
                         <button id="pay-btn" class="btn btn-success w-100 mt-3">
@@ -159,58 +165,63 @@
         </div>
     </div>
 @endsection
+
 @push('script')
     <script>
-        let selectedOngkir = 0;
         document.addEventListener("DOMContentLoaded", function() {
+
+            // 📌 Variabel utama
+            let selectedOngkir = 0;
+            let subtotal = {{ $carts->sum(fn($c) => $c->product->final_price * $c->pcs) }};
+            let discount_by_merchant = {{ $carts->sum(fn($c) => ($c->product->default_price - $c->product->final_price) * $c->pcs) }};
+            let totalWeight = {{ $carts->sum(fn($c) => ($c->product->weight ?? 1000) * $c->pcs) }};
 
             const addressRadios = document.querySelectorAll('input[name="address_id"]');
             const courierList = document.getElementById('courier-list');
             const ongkirText = document.getElementById('ongkir');
             const totalText = document.getElementById('total');
+            const payBtn = document.getElementById('pay-btn');
 
-            let subtotal = {{ $carts->sum(fn($c) => $c->product->final_price * $c->pcs) }};
-            let totalWeight = {{ $carts->sum(fn($c) => ($c->product->weight ?? 1000 ?: 1000) * $c->pcs) }};
-
+            // 📌 Fungsi format Rupiah
             function formatRupiah(number) {
                 return 'Rp ' + number.toLocaleString('id-ID');
             }
 
+            // 📌 Update total (subtotal + ongkir)
             function updateTotal() {
                 totalText.innerText = formatRupiah(subtotal + selectedOngkir);
             }
 
-            // 🔥 PILIH ALAMAT → LOAD COURIER
+            // 📌 Event: Pilih alamat → load courier
             addressRadios.forEach(radio => {
                 radio.addEventListener('change', function() {
-
                     let districtId = this.dataset.district;
 
                     fetch(`/home/couriers/${districtId}`)
                         .then(res => res.json())
                         .then(data => {
 
-                            if (data.length === 0) {
+                            if (!data.length) {
                                 courierList.innerHTML =
                                     `<div class="text-danger">Tidak ada kurir</div>`;
                                 return;
                             }
 
+                            // Render list courier
                             let html = '';
-
                             data.forEach(courier => {
                                 html += `
-                                    <div class="border p-2 mb-2 rounded">
-                                        <input type="radio" name="courier"
-                                            data-price="${courier.price_per_kg}"
-                                            data-name="${courier.name}" 
-                                            data-service="${courier.service}" 
-                                            data-estimate="${courier.estimated_delivery_time}">
-                                        <strong>${courier.name} (${courier.service})</strong><br>
-                                        ${formatRupiah(courier.price_per_kg)} / kg <br>
-                                        Estimasi: ${courier.estimated_delivery_time}
-                                    </div>
-                                `;
+                            <div class="border p-2 mb-2 rounded">
+                                <input type="radio" name="courier"
+                                    data-price="${courier.price_per_kg}"
+                                    data-name="${courier.name}" 
+                                    data-service="${courier.service}" 
+                                    data-estimate="${courier.estimated_delivery_time}">
+                                <strong>${courier.name} (${courier.service})</strong><br>
+                                ${formatRupiah(courier.price_per_kg)} / kg <br>
+                                Estimasi: ${courier.estimated_delivery_time}
+                            </div>
+                        `;
                             });
 
                             courierList.innerHTML = html;
@@ -221,104 +232,82 @@
                             courierList.innerHTML =
                                 `<div class="text-danger">Error ambil ongkir</div>`;
                         });
-
                 });
             });
 
-            // 🔥 FIX UTAMA: EVENT DELEGATION (INI YANG BIKIN DULU GAGAL)
+            // 📌 Event delegation: pilih courier → hitung ongkir
             courierList.addEventListener('change', function(e) {
-
-                console.log("EVENT KE TRIGGER"); // 👈 cek ini
-
                 if (e.target.name === 'courier') {
-
-                    console.log("PRICE:", e.target.dataset.price); // 👈 cek ini
-
                     let price = parseInt(e.target.dataset.price);
-
                     let ongkir = Math.ceil(totalWeight / 1000) * price;
                     selectedOngkir = ongkir;
-                    console.log("ONGKIR:", ongkir); // 👈 cek ini
 
                     ongkirText.innerText = formatRupiah(ongkir);
-
                     updateTotal();
                 }
             });
 
-        });
+            // 📌 Event: Klik bayar → POST checkout
+            payBtn.addEventListener('click', function() {
 
-        const payBtn = document.getElementById('pay-btn');
+                // Ambil address
+                let address = document.querySelector('input[name="address_id"]:checked');
+                if (!address) {
+                    alert("Pilih alamat dulu");
+                    return;
+                }
 
-        payBtn.addEventListener('click', function() {
+                // Ambil courier
+                let courier = document.querySelector('input[name="courier"]:checked');
+                if (!courier) {
+                    alert("Pilih courier dulu");
+                    return;
+                }
 
+                // Ambil payment method
+                let payment_method = document.querySelector('input[name="payment_method"]:checked')?.value;
+                if (!payment_method) {
+                    alert("Pilih metode pembayaran dulu");
+                    return;
+                }
 
-            // 🔥 ambil address
-            let address = document.querySelector('input[name="address_id"]:checked');
-            if (!address) {
-                alert("Pilih alamat dulu");
-                return;
-            }
+                // Validasi COD
+                if (payment_method === 'cod' && subtotal > 1000000) {
+                    alert("COD hanya bisa untuk subtotal maksimal Rp 1.000.000");
+                    return;
+                }
 
-            // 🔥 ambil courier
-            let courier = document.querySelector('input[name="courier"]:checked');
-            if (!courier) {
-                alert("Pilih courier dulu");
-                return;
-            }
+                // Ambil data untuk dikirim
+                let payload = {
+                    address_id: address.value,
+                    carts: new URLSearchParams(window.location.search).get('carts'),
+                    shipping_cost: selectedOngkir,
+                    courier_name: courier.dataset.name,
+                    courier_service: courier.dataset.service,
+                    estimated_delivery: courier.dataset.estimate,
+                    payment_method
+                };
 
-            // 🔥 ambil payment method
-            let payment_method = document.querySelector('input[name="payment_method"]:checked')?.value;
-
-
-            if (!payment_method) {
-                alert("Pilih metode pembayaran dulu");
-                return;
-            }
-            let subtotal = {{ $carts->sum(fn($c) => $c->product->final_price * $c->pcs) }};
-
-            if (payment_method === 'cod' && subtotal > 1000000) {
-                alert("COD hanya bisa untuk subtotal maksimal Rp 1.000.000");
-                return;
-            }
-
-            // 🔥 ambil data
-            let address_id = address.value;
-            let shipping_cost = selectedOngkir;
-
-            let courier_name = courier.dataset.name; // "JNE"
-            let courier_service = courier.dataset.service; // "Reguler"
-            let estimated_delivery = courier.dataset.estimate; // "1-3 Days"
-
-            // 🔥 ambil cart dari URL
-            let params = new URLSearchParams(window.location.search);
-            let carts = params.get('carts'); // contoh: "3,4"
-
-            fetch("{{ route('customer.checkout.store') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        address_id,
-                        carts,
-                        shipping_cost,
-                        courier_name,
-                        courier_service,
-                        estimated_delivery,
-                        payment_method
+                // 🔥 POST checkout
+                fetch("{{ route('customer.checkout.store') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify(payload)
                     })
-                })
-                .then(res => res.json())
-                .then(res => {
-                    console.log(res);
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.success) {
+                            window.location.href = res.redirect;
+                        } else {
+                            alert(res.message || "Terjadi kesalahan");
+                        }
+                    })
+                    .catch(err => console.log(err));
 
-                    if (res.success) {
-                        window.location.href = res.redirect;
-                    }
-                })
-                .catch(err => console.log(err));
+            });
 
         });
     </script>
