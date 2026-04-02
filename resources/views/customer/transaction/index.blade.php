@@ -3,7 +3,6 @@
 @section('content')
     <div>
         <h3 class="mb-4">Transaction</h3>
-
         @forelse ($transactions as $trx)
             @php
                 $totalItems = $trx->transactionDetails->count();

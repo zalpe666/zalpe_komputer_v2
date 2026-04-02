@@ -5,6 +5,8 @@ use App\Http\Controllers\CustomerCartController;
 use App\Http\Controllers\CustomerCheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerCourierController;
+use App\Http\Controllers\CustomerDashboardController;
+use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\CustomerRatingController;
 use App\Http\Controllers\CustomerTransactionController;
 use App\Http\Controllers\DashboardBrandController;
@@ -69,6 +71,12 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::get('/transaction/{transaction}/product/{product}/rate', [CustomerRatingController::class, 'index'])->name('transaction.rate.form');
     Route::post('/transaction/{transaction}/product/{product}/rate', [CustomerRatingController::class, 'store'])->name('transaction.rate.submit');
 
+    Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/setting', [CustomerDashboardController::class, 'setting'])->name('dashboard.setting');
+
+    Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [CustomerProfileController::class, 'destroy'])->name('profile.destroy');
 
 
 

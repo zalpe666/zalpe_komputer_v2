@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.customer-layout')
 
-@section('title', 'Admin Panel')
+@section('title', 'Add Address')
 @section('content')
     <div class="container py-4">
         <h4 class="fw-bold mb-3">Add Address</h4>

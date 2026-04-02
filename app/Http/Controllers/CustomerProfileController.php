@@ -9,14 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
-class ProfileController extends Controller
+class CustomerProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
+        return view('customer.profile.edit', [
             'user' => $request->user(),
         ]);
     }
@@ -33,7 +30,8 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+
+        return Redirect::route('customer.profile.edit')->with('status', 'profile-updated');
     }
 
     /**

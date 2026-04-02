@@ -18,7 +18,7 @@
             </form>
 
             <!-- Main Form -->
-            <form method="POST" action="{{ route('profile.update') }}">
+            <form method="POST" action="{{ route('customer.profile.update') }}">
                 @csrf
                 @method('PATCH')
 

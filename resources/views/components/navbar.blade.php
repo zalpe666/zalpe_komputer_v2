@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand text-success fw-bold" href="{{ route('customer.home.index') }}">Zalpe Komputer</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -32,7 +32,7 @@
                                 <a class="dropdown-item" href="{{ route('customer.transaction.index') }}">Transaction</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#">Profile</a>
+                                <a class="dropdown-item" href="{{ route('customer.profile.edit') }}">Profile</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ route('customer.address.index') }}">Address</a>
