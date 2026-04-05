@@ -12,22 +12,56 @@ use App\Models\Wallet;
 
 class CustomerTransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::with([
-            'transactionDetails.product'
-        ])
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->get();
+        $transactionTypes = ['Shopping', 'Games', 'Top-Up', 'Phone Credit'];
 
-        return view('customer.transaction.index', compact('transactions'));
+        $query = Transaction::with(['transactionDetails.product'])
+            ->where('user_id', auth()->id())
+            ->latest(); // 🔥 default urut terbaru
+
+        // 🔹 Filter status
+        if ($request->filled('status')) {
+            $query->where('transaction_status', $request->status);
+        }
+
+        // 🔹 Filter tipe transaksi
+        if ($request->filled('type')) {
+            $query->where('transaction_type', $request->type);
+        }
+
+        // 🔹 Filter tanggal (range)
+        if ($request->filled(['start_date', 'end_date'])) {
+            $query->whereBetween('created_at', [
+                $request->start_date . ' 00:00:00',
+                $request->end_date . ' 23:59:59'
+            ]);
+        } else {
+            // 🔥 Optional: default tampil 90 hari terakhir (biar ringan)
+            if (!$request->hasAny(['start_date', 'end_date'])) {
+                $query->where('created_at', '>=', now()->subDays(90));
+            }
+        }
+
+        // 🔹 Pagination
+        $transactions = $query->paginate(5)->withQueryString();
+
+        return view('customer.transaction.index', [
+            'transactions' => $transactions,
+            'transactionTypes' => $transactionTypes,
+            'filters' => $request->only(['status', 'type', 'start_date', 'end_date'])
+        ]);
     }
 
     // 📌 Detail transaksi
     public function show($id)
     {
-        $transaction = Transaction::with(['transactionDetails.product', 'address'])
+        $transaction = Transaction::with([
+            'transactionDetails.product',
+            'address.province',
+            'address.city',
+            'address.district'
+        ])
             ->where('user_id', auth()->id())
             ->findOrFail($id);
 
@@ -85,7 +119,8 @@ class CustomerTransactionController extends Controller
 
         // Update status transaksi
         $transaction->update([
-            'transaction_status' => 'Completed'
+            'transaction_status' => 'Completed',
+            'completed_date' => now(),
         ]);
         $transaction->transactionDetails()->update([
             'status' => 'Completed'

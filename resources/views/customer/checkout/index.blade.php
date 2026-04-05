@@ -285,7 +285,8 @@
                     courier_name: courier.dataset.name,
                     courier_service: courier.dataset.service,
                     estimated_delivery: courier.dataset.estimate,
-                    payment_method
+                    payment_method,
+                    total_weight: totalWeight,
                 };
 
                 // 🔥 POST checkout

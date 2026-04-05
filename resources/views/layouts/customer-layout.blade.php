@@ -97,6 +97,11 @@
                                 <i class="bi bi-receipt"></i>
                                 Transaction
                             </a>
+                            <a href="{{ route('customer.rating.index') }}"
+                                class="list-group-item list-group-item-action d-flex align-items-center gap-2 {{ Request::routeIs('customer.rating.*') ? 'active' : '' }}">
+                                <i class="bi bi-star"></i>
+                                Rate Product
+                            </a>
 
                             <a href="#"
                                 class="list-group-item list-group-item-action d-flex align-items-center gap-2 {{ Request::routeIs('wishlist') ? 'active' : '' }}">

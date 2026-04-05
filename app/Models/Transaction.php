@@ -28,6 +28,8 @@ class Transaction extends Model
         'transaction_type',
         'discount_by_merchant',
         'discount_by_voucher',
+        'total_weight',
+        'completed_date',
     ];
 
     // 🔥 RELATION
@@ -53,5 +55,12 @@ class Transaction extends Model
         'subtotal' => 'integer',
         'shipping_cost' => 'integer',
         'total' => 'integer',
+        'payment_date' => 'datetime',
+        'sending_date' => 'datetime',
+        'delivered_date' => 'datetime',
+        'canceled_date' => 'datetime',
+        'completed_date' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 }

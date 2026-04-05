@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomerCheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerCourierController;
 use App\Http\Controllers\CustomerDashboardController;
+use App\Http\Controllers\CustomerNotificationController;
 use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\CustomerRatingController;
 use App\Http\Controllers\CustomerTransactionController;
@@ -68,8 +69,8 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::get('/transaction/{id}/payment', [CustomerTransactionController::class, 'payment'])->name('transaction.payment');
     Route::put('/transaction/{id}/complete', [CustomerTransactionController::class, 'markAsCompleted'])->name('transaction.complete');
     Route::put('/transaction/{id}/cancel', [CustomerTransactionController::class, 'cancel'])->name('transaction.cancel');
-    Route::get('/transaction/{transaction}/product/{product}/rate', [CustomerRatingController::class, 'index'])->name('transaction.rate.form');
-    Route::post('/transaction/{transaction}/product/{product}/rate', [CustomerRatingController::class, 'store'])->name('transaction.rate.submit');
+    Route::get('/rating/{transaction}/product/{product}/rate', [CustomerRatingController::class, 'create'])->name('rating.rate.form');
+    Route::post('/rating/{transaction}/product/{product}/rate', [CustomerRatingController::class, 'store'])->name('rating.rate.submit');
 
     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/setting', [CustomerDashboardController::class, 'setting'])->name('dashboard.setting');
@@ -77,8 +78,9 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [CustomerProfileController::class, 'destroy'])->name('profile.destroy');
-
-
+    
+    Route::get('/rating', [CustomerRatingController::class, 'index'])->name('rating.index');
+    Route::post('/notifications/read-all', [CustomerNotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 
     // dropdown dinamis
     Route::get('/cities/{province}', [CustomerAddressController::class, 'getCities']);

@@ -70,13 +70,16 @@ class CustomerCheckoutController extends Controller
                     'total' => $total,
                     'discount_by_merchant' => $total_discount, // <--- simpan total diskon di sini
                     'payment_method' => $request->payment_method,
-                    'payment_status' => 'Unpaid',
-                    'transaction_status' => 'Waiting Payment',
+                    // 'payment_status' => 'Unpaid',
+                    // 'transaction_status' => 'Waiting Payment',
+                    'payment_status' => 'Paid',
+                    'transaction_status' => 'Packing',
                     'courier_name' => $request->courier_name,
                     'courier_service' => $request->courier_service,
                     'estimated_delivery' => $request->estimated_delivery,
                     'status' => 'pending',
-                    'transaction_type' => 'Transaction',
+                    'transaction_type' => 'Shopping',
+                    'total_weight' => $request->total_weight,
                 ]);
 
                 // 🔥 SIMPAN DETAIL & KURANGI STOCK

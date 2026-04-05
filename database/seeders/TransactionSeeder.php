@@ -20,9 +20,8 @@ class TransactionSeeder extends Seeder
         $users = User::with('addresses')
             ->where('role', 'customer')
             ->get()
-            ->filter(function ($user) {
-                return $user->addresses->isNotEmpty();
-            });
+            ->filter(fn($user) => $user->addresses->isNotEmpty());
+
         $products = Product::all();
 
         // ========================
@@ -66,9 +65,17 @@ class TransactionSeeder extends Seeder
         $paymentMethods = ['VA', 'QRIS', 'E-Wallet'];
         $payment_method = $paymentMethods[array_rand($paymentMethods)];
 
+        // Pilih transaction_type random
+        $transactionTypes = ['Shopping', 'Games', 'Top-Up', 'Phone Credit'];
+        $transaction_type = $transactionTypes[array_rand($transactionTypes)];
+
+        // Pilih transaction_status random
+        $transactionStatuses = ['Pending', 'Waiting Payment', 'Packing', 'Sending', 'Delivered', 'Completed', 'Cancelled'];
+        $transaction_status = $transactionStatuses[array_rand($transactionStatuses)];
+
         $transaction = Transaction::create([
             'invoice' => $invoice,
-            'user_id' => $user->id,
+            'user_id' => 1,
             'address_id' => $address->id,
             'subtotal' => $subtotal,
             'shipping_cost' => $shipping_cost,
@@ -78,10 +85,10 @@ class TransactionSeeder extends Seeder
             'estimated_delivery' => '2-3 Hari',
             'payment_method' => $payment_method,
             'payment_status' => "Paid",
-            'transaction_status' => "Packing",
+            'transaction_status' => $transaction_status,
             'notes' => null,
             'snap_token' => null,
-            'transaction_type' => 'Online',
+            'transaction_type' => $transaction_type,
             'created_at' => $date,
             'updated_at' => $date,
         ]);

@@ -75,6 +75,34 @@
 
             {{-- ✅ Search hanya untuk login --}}
             @auth
+                <div class="dropdown me-3">
+                    <button id="notifDropdown" class="btn btn-light position-relative" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell"></i>
+
+                        @if ($unreadCount > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">
+                                {{ $unreadCount }}
+                            </span>
+                        @endif
+                    </button>
+
+                    <div class="dropdown-menu dropdown-menu-end p-2"
+                        style="width: 300px; max-height: 400px; overflow-y:auto;">
+                        @forelse($notifications as $notif)
+                            <a href="{{ $notif->link ?? '#' }}" class="text-decoration-none text-dark">
+
+                                <div class="mb-2 p-2 rounded {{ $notif->is_read ? '' : 'bg-light' }}">
+                                    <div class="fw-bold">{{ $notif->title }}</div>
+                                    <small>{{ $notif->message }}</small><br>
+                                    <small class="text-muted">{{ $notif->created_at->diffForHumans() }}</small>
+                                </div>
+
+                            </a>
+                        @empty
+                            <div class="text-center text-muted">Tidak ada notifikasi</div>
+                        @endforelse
+                    </div>
+                </div>
                 <form class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
@@ -84,3 +112,28 @@
         </div>
     </div>
 </nav>
+@push('script')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const notifBtn = document.getElementById("notifDropdown");
+
+            if (notifBtn) {
+                notifBtn.addEventListener("click", function() {
+
+                    fetch("{{ route('customer.notifications.readAll') }}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "Content-Type": "application/json"
+                        }
+                    }).then(() => {
+                        // 🔥 langsung hilangin badge tanpa reload
+                        const badge = notifBtn.querySelector(".badge");
+                        if (badge) badge.remove();
+                    });
+
+                });
+            }
+        });
+    </script>
+@endpush

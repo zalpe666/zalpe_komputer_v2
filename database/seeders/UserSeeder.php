@@ -17,6 +17,13 @@ class UserSeeder extends Seeder
         // 🔹 User default
         User::insert([
             [
+                'name' => 'Zalpe Rabbani',
+                'email' => 'zalpe@gmail.com',
+                'password' => $password,
+                'role' => 'customer',
+                'is_active' => true,
+            ],
+            [
                 'name' => 'Master User',
                 'email' => 'master@gmail.com',
                 'password' => $password,
@@ -51,13 +58,7 @@ class UserSeeder extends Seeder
                 'role' => 'customer',
                 'is_active' => true,
             ],
-            [
-                'name' => 'Zalpe Rabbani',
-                'email' => 'zalpe@gmail.com',
-                'password' => $password,
-                'role' => 'customer',
-                'is_active' => true,
-            ],
+
         ]);
 
         // 🔥 10 Customer Random

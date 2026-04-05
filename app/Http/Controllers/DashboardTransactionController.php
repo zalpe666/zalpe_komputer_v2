@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use Carbon\Carbon;
+use App\Models\Notification;
 
 class DashboardTransactionController extends Controller
 {
@@ -67,6 +68,14 @@ class DashboardTransactionController extends Controller
         }
 
         $transaction->save();
+
+        // 🔔 INSERT NOTIFICATION
+        Notification::create([
+            'user_id' => $transaction->user_id,
+            'title'   => 'Update Status Pesanan',
+            'message' => "Pesanan kamu dengan ID #{$transaction->id} sekarang statusnya: {$status}",
+            "link"    => route('customer.transaction.show', $transaction->id),
+        ]);
 
         return back()->with('success', 'Status berhasil diupdate');
     }

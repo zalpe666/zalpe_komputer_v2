@@ -6,9 +6,28 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
+
 class CustomerRatingController extends Controller
 {
-    public function index($transactionId, $productId)
+    public function index()
+    {
+        $userId = auth()->id();
+
+        // Ambil semua transactionDetails user yang status transaksinya Completed
+        $transactionDetails = \App\Models\TransactionDetail::with('product', 'transaction')
+            ->whereHas('transaction', function ($q) use ($userId) {
+                $q->where('user_id', $userId)
+                    ->where('transaction_status', 'Completed');
+            })
+            ->get();
+
+        // Pisahkan Ongoing & Completed rating
+        $ongoing = $transactionDetails->filter(fn($item) => is_null($item->rating) || $item->rating == 0);
+        $completed = $transactionDetails->filter(fn($item) => $item->rating > 0);
+
+        return view('customer.rating.index', compact('ongoing', 'completed'));
+    }
+    public function create($transactionId, $productId)
     {
         $transaction = Transaction::with('transactionDetails')->findOrFail($transactionId);
         $product = Product::findOrFail($productId);

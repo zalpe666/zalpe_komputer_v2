@@ -26,10 +26,20 @@
                             <div class="flex-grow-1">
                                 <h6 class="mb-1">{{ $cart->product->name }}</h6>
 
-                                <small class="text-muted">
-                                    Rp {{ number_format($cart->product->final_price) }}
-                                </small>
-
+                                @if ($cart->product->discount > 0)
+                                    <div>
+                                        <small class="text-muted text-decoration-line-through me-2">
+                                            Rp {{ number_format($cart->product->default_price) }}
+                                        </small>
+                                        <small class="fw-semibold text-danger">
+                                            Rp {{ number_format($cart->product->final_price) }}
+                                        </small>
+                                    </div>
+                                @else
+                                    <small class="text-muted">
+                                        Rp {{ number_format($cart->product->final_price) }}
+                                    </small>
+                                @endif
                                 {{-- QTY --}}
                                 <div class="d-flex align-items-center mt-2">
 
