@@ -5,14 +5,25 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Cart;
+use App\Models\Banner;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        $products = Product::where('is_active', true)->latest()->get();
+        $banners = Banner::all();
 
-        return view('customer.home.index', compact('products'));
+        $productsLatest = Product::where('is_active', true)
+            ->latest()
+            ->limit(10)
+            ->get();
+        $productsDiscount = Product::where('is_active', true)
+            ->where('discount', '>', 0)
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        return view('customer.home.index', compact('productsLatest', 'productsDiscount', 'banners'));
     }
 
     public function addToCart(Request $request, $id)

@@ -1,92 +1,105 @@
 @extends('layouts.app')
 
 @section('title', 'Admin Panel')
+
 @section('content')
+
+
     <div class="container">
-        <h1>Ini Adalah User</h1>
-        <div class="container mt-4">
-            <div class="row">
 
-                @foreach ($products as $product)
-                    <div class="col-md-3 mb-4">
-                        <div class="card h-100 position-relative">
+        {{-- BANNER --}}
+        <div id="carouselExampleIndicators" class="carousel slide mb-4">
+            <div class="carousel-indicators">
+                @foreach ($banners as $key => $banner)
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ $key }}"
+                        class="{{ $key == 0 ? 'active' : '' }}">
+                    </button>
+                @endforeach
+            </div>
 
-                            {{-- BADGE DISKON --}}
-                            @if ($product->discount > 0)
-                                <span class="badge bg-danger position-absolute top-0 end-0 m-2">
-                                    -{{ $product->discount }}%
-                                </span>
-                            @endif
-
-                            {{-- IMAGE --}}
-                            <img src="{{ $product->image }}" class="card-img-top"; object-fit:cover;"
-                                onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
-
-                            <div class="card-body d-flex flex-column">
-
-                                {{-- NAME --}}
-                                <h6 class="fw-bold text-truncate">{{ $product->name }}</h6>
-
-                                {{-- BRAND --}}
-                                <small class="text-muted">
-                                    {{ $product->brand->name ?? '-' }}
-                                </small>
-
-                                {{-- RATING --}}
-                                <small class="text-muted">
-                                    {{ $product->rating ?? '-' }} <i class="bi bi-star-fill text-warning"></i>
-                                </small>
-
-                                {{-- PRICE --}}
-                                <div class="mt-2 mb-3">
-                                    <span class="fw-bold text-success">
-                                        Rp {{ number_format($product->final_price) }}
-                                    </span>
-
-                                    @if ($product->discount > 0)
-                                        <small class="text-decoration-line-through text-muted ms-1">
-                                            Rp {{ number_format($product->default_price) }}
-                                        </small>
-                                    @endif
-                                </div>
-
-                                {{-- STOCK --}}
-                                @if ($product->is_out_of_stock)
-                                    <span class="badge bg-danger mb-2">Out of Stock</span>
-                                @endif
-
-                                {{-- BUTTON --}}
-                                <div class="mt-auto">
-                                    @auth
-                                        @if ($product->type !== 'Product')
-                                            <a href="{{ route('customer.checkout.now.index', $product->id) }}"
-                                                class="btn btn-primary w-100 {{ $product->is_out_of_stock ? 'disabled' : '' }}">
-                                                Buy Now
-                                            </a>
-                                        @else
-                                            <form action="{{ route('customer.cart.add', $product->id) }}" method="POST">
-                                                @csrf
-                                                <button class="btn btn-success w-100"
-                                                    {{ $product->is_out_of_stock ? 'disabled' : '' }}>
-                                                    Add to Cart
-                                                </button>
-                                            </form>
-                                        @endif
-                                    @endauth
-
-                                    @guest
-                                        <a href="{{ route('login') }}" class="btn btn-outline-secondary w-100">
-                                            Login to Buy
-                                        </a>
-                                    @endguest
-                                </div>
-
-                            </div>
-                        </div>
+            <div class="carousel-inner rounded-4 overflow-hidden">
+                @foreach ($banners as $key => $banner)
+                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                        <img src="{{ $banner->image }}" class="d-block w-100" style="height: 350px; object-fit: cover;">
                     </div>
                 @endforeach
+            </div>
 
+        </div>
+
+        {{-- HEADER SLIDER --}}
+        <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <h3 class="m-0 p-0">Latest Product</h3>
+                    <p class="text-muted">Discover our newest arrivals</p>
+                </div>
+                <div>
+                    <button class="btn btn-outline-success btn-prev rounded-4 me-2">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+
+                    <button class="btn btn-outline-success btn-next rounded-4 me-2">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            {{-- SLIDER --}}
+            <div class="product-slider">
+                @foreach ($productsLatest as $product)
+                    <div class="px-2">
+                        <x-product-card :product="$product" />
+                    </div>
+                @endforeach
             </div>
         </div>
+        {{-- <div class="product-slider">
+            @foreach ($productsDiscount as $product)
+                <div class="px-2">
+                    <x-product-card :product="$product" />
+                </div>
+            @endforeach
+        </div> --}}
+
     </div>
+
 @endsection
+@push('script')
+    <script>
+        $(document).ready(function() {
+
+            $('.product-slider').slick({
+                slidesToShow: 4,
+                slidesToScroll: 2,
+                arrows: false, // ❗ penting: matikan default arrow
+                dots: false,
+                autoplay: true,
+                autoplaySpeed: 2000,
+                responsive: [{
+                        breakpoint: 992,
+                        settings: {
+                            slidesToShow: 2
+                        }
+                    },
+                    {
+                        breakpoint: 576,
+                        settings: {
+                            slidesToShow: 1
+                        }
+                    }
+                ]
+            });
+
+            // NEXT
+            $('.btn-next').click(function() {
+                $('.product-slider').slick('slickNext');
+            });
+
+            $('.btn-prev').click(function() {
+                $('.product-slider').slick('slickPrev');
+            });
+
+        });
+    </script>
+@endpush

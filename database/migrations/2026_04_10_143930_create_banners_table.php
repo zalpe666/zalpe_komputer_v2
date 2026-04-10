@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
+            $table->string('image'); // URL / path gambar
+            $table->string('link')->nullable(); // redirect kalau diklik
             $table->timestamps();
         });
     }
