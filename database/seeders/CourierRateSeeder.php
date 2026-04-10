@@ -246,157 +246,157 @@ class CourierRateSeeder extends Seeder
 
             // JNE
 
-            $rates[] = [
+            // $rates[] = [
 
-                'district_id' => $districtId,
+            //     'district_id' => $districtId,
 
-                'name' => 'JNE',
+            //     'name' => 'JNE',
 
-                'service' => 'Reguler',
+            //     'service' => 'Reguler',
 
-                'price_per_kg' => $basePriceReguler,
+            //     'price_per_kg' => $basePriceReguler,
 
-                'estimated_delivery_time' => '1-3 Days',
+            //     'estimated_delivery_time' => '1-3 Days',
 
-                'created_at' => $now,
+            //     'created_at' => $now,
 
-                'updated_at' => $now
+            //     'updated_at' => $now
 
-            ];
+            // ];
 
-            $rates[] = [
+            // $rates[] = [
 
-                'district_id' => $districtId,
+            //     'district_id' => $districtId,
 
-                'name' => 'JNE',
+            //     'name' => 'JNE',
 
-                'service' => 'YES',
+            //     'service' => 'YES',
 
-                'price_per_kg' => (int)($basePriceReguler * 1.50 * $distanceFactor),
+            //     'price_per_kg' => (int)($basePriceReguler * 1.50 * $distanceFactor),
 
-                'estimated_delivery_time' => '1-2 Days',
+            //     'estimated_delivery_time' => '1-2 Days',
 
-                'created_at' => $now,
+            //     'created_at' => $now,
 
-                'updated_at' => $now
+            //     'updated_at' => $now
 
-            ];
+            // ];
 
-            $rates[] = [
+            // $rates[] = [
 
-                'district_id' => $districtId,
+            //     'district_id' => $districtId,
 
-                'name' => 'JNE',
+            //     'name' => 'JNE',
 
-                'service' => 'Cargo',
+            //     'service' => 'Cargo',
 
-                'price_per_kg' => (int)($basePriceReguler * 0.35),
+            //     'price_per_kg' => (int)($basePriceReguler * 0.35),
 
-                'estimated_delivery_time' => '3-4 Days',
+            //     'estimated_delivery_time' => '3-4 Days',
 
-                'created_at' => $now,
+            //     'created_at' => $now,
 
-                'updated_at' => $now
+            //     'updated_at' => $now
 
-            ];
+            // ];
 
 
 
-            // SiCepat
+            // // SiCepat
 
-            $rates[] = [
+            // $rates[] = [
 
-                'district_id' => $districtId,
+            //     'district_id' => $districtId,
 
-                'name' => 'SiCepat',
+            //     'name' => 'SiCepat',
 
-                'service' => 'Reguler',
+            //     'service' => 'Reguler',
 
-                'price_per_kg' => (int)($basePriceReguler * 1.05),
+            //     'price_per_kg' => (int)($basePriceReguler * 1.05),
 
-                'estimated_delivery_time' => '1-3 Days',
+            //     'estimated_delivery_time' => '1-3 Days',
 
-                'created_at' => $now,
+            //     'created_at' => $now,
 
-                'updated_at' => $now
+            //     'updated_at' => $now
 
-            ];
+            // ];
 
-            $rates[] = [
+            // $rates[] = [
 
-                'district_id' => $districtId,
+            //     'district_id' => $districtId,
 
-                'name' => 'SiCepat',
+            //     'name' => 'SiCepat',
 
-                'service' => 'BEST',
+            //     'service' => 'BEST',
 
-                'price_per_kg' => (int)($basePriceReguler * 1.75 * $distanceFactor),
+            //     'price_per_kg' => (int)($basePriceReguler * 1.75 * $distanceFactor),
 
-                'estimated_delivery_time' => '1 Days',
+            //     'estimated_delivery_time' => '1 Days',
 
-                'created_at' => $now,
+            //     'created_at' => $now,
 
-                'updated_at' => $now
+            //     'updated_at' => $now
 
-            ];
+            // ];
 
-            $rates[] = [
+            // $rates[] = [
 
-                'district_id' => $districtId,
+            //     'district_id' => $districtId,
 
-                'name' => 'SiCepat',
+            //     'name' => 'SiCepat',
 
-                'service' => 'Cargo',
+            //     'service' => 'Cargo',
 
-                'price_per_kg' => (int)($basePriceReguler * 0.35),
+            //     'price_per_kg' => (int)($basePriceReguler * 0.35),
 
-                'estimated_delivery_time' => '2-4 Days',
+            //     'estimated_delivery_time' => '2-4 Days',
 
-                'created_at' => $now,
+            //     'created_at' => $now,
 
-                'updated_at' => $now
+            //     'updated_at' => $now
 
-            ];
+            // ];
 
 
 
-            // Anteraja
+            // // Anteraja
 
-            $rates[] = [
+            // $rates[] = [
 
-                'district_id' => $districtId,
+            //     'district_id' => $districtId,
 
-                'name' => 'Anteraja',
+            //     'name' => 'Anteraja',
 
-                'service' => 'Reguler',
+            //     'service' => 'Reguler',
 
-                'price_per_kg' => (int)($basePriceReguler * 1.15),
+            //     'price_per_kg' => (int)($basePriceReguler * 1.15),
 
-                'estimated_delivery_time' => '1-2 Days',
+            //     'estimated_delivery_time' => '1-2 Days',
 
-                'created_at' => $now,
+            //     'created_at' => $now,
 
-                'updated_at' => $now
+            //     'updated_at' => $now
 
-            ];
+            // ];
 
-            $rates[] = [
+            // $rates[] = [
 
-                'district_id' => $districtId,
+            //     'district_id' => $districtId,
 
-                'name' => 'Anteraja',
+            //     'name' => 'Anteraja',
 
-                'service' => 'Cargo',
+            //     'service' => 'Cargo',
 
-                'price_per_kg' => (int)($basePriceReguler * 0.35),
+            //     'price_per_kg' => (int)($basePriceReguler * 0.35),
 
-                'estimated_delivery_time' => '3-4 Days',
+            //     'estimated_delivery_time' => '3-4 Days',
 
-                'created_at' => $now,
+            //     'created_at' => $now,
 
-                'updated_at' => $now
+            //     'updated_at' => $now
 
-            ];
+            // ];
 
             // GoSend
 

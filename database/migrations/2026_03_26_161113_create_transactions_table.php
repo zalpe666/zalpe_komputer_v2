@@ -17,8 +17,8 @@ return new class extends Migration
             $table->enum('transaction_type', ['Shopping', 'Games', 'Top-Up', 'Phone Credit'])->default('Shopping');
 
 
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('address_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('address_id')->nullable()->constrained()->cascadeOnDelete();
 
             // 💰 harga
             $table->integer('subtotal');
@@ -28,14 +28,14 @@ return new class extends Migration
             $table->integer('total');
             
             // 🚚 pengiriman
-            $table->string('courier_name');
-            $table->string('courier_service');
-            $table->string('estimated_delivery');
+            $table->string('courier_name')->nullable();
+            $table->string('courier_service')->nullable();
+            $table->string('estimated_delivery')->nullable();
             $table->integer('total_weight')->default(0); // 🔥 total berat untuk kurir
 
             // 💳 pembayaran
             $table->string('payment_method')->nullable();
-            $table->enum('payment_status', ['Pending', 'Unpaid', 'Paid', 'Refunded'])->default('pending');
+            $table->enum('payment_status', ['Pending', 'Unpaid', 'Paid', 'Refunded'])->default('Pending');
             $table->enum('transaction_status', ['Pending', 'Waiting Payment', 'Packing', 'Sending', 'Delivered', 'Completed', 'Cancelled'])->default('Pending');
             $table->string('notes')->nullable();
             $table->string('snap_token')->nullable(); // Midtrans

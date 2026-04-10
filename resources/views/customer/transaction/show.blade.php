@@ -93,6 +93,10 @@
                             <span class="fw-semibold">#{{ $transaction->id ?? '-' }}</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Weight (Grams)</span>
+                            <span class="fw-semibold">{{ number_format($transaction->total_weight ?? 0) ?? '-' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Transaction Date</span>
                             <span>
                                 {{ $transaction->created_at ? $transaction->created_at->format('d M Y H:i') : '-' }}
@@ -193,7 +197,7 @@
                             <img src="{{ $item->product->image }}" alt="{{ $item->product->name }}" class="img-thumbnail"
                                 style="max-width: 80px;">
                         </td>
-                        <td>{{ $item->product->name }}</td>
+                        <td width="45%">{{ $item->product->name }}</td>
                         <td> {{ number_format($item->price) }}</td>
                         <td>{{ $item->qty }} pcs</td>
                         <td>Rp {{ number_format($item->total) }}</td>

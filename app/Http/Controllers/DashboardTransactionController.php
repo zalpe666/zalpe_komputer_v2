@@ -70,11 +70,29 @@ class DashboardTransactionController extends Controller
         $transaction->save();
 
         // 🔔 INSERT NOTIFICATION
+        $message = match ($status) {
+            'Packing' => "Pesanan kamu (#{$transaction->id}) sedang kami siapkan. Mohon tunggu ya, kami akan segera mengirimkannya 🚀",
+
+            'Sending' => "Kabar baik! Pesanan kamu (#{$transaction->id}) sudah dikirim dan sedang dalam perjalanan 🚚. Silakan cek status pengiriman secara berkala.",
+
+            'Delivered' => "Pesanan kamu (#{$transaction->id}) sudah sampai 🎉. Jangan lupa cek barangnya dan semoga kamu puas dengan produk kami!",
+
+            default => "Status pesanan kamu (#{$transaction->id}) telah diperbarui.",
+        };
+
+        $title = match ($status) {
+            'Packing' => 'Pesanan Sedang Diproses',
+            'Sending' => 'Pesanan Dikirim',
+            'Delivered' => 'Pesanan Selesai',
+            default => 'Update Pesanan',
+        };
+
         Notification::create([
+            'type'    => 'Shopping', // lebih aman hardcode
             'user_id' => $transaction->user_id,
-            'title'   => 'Update Status Pesanan',
-            'message' => "Pesanan kamu dengan ID #{$transaction->id} sekarang statusnya: {$status}",
-            "link"    => route('customer.transaction.show', $transaction->id),
+            'title'   => $title,
+            'message' => $message,
+            'link'    => route('customer.transaction.show', $transaction->id),
         ]);
 
         return back()->with('success', 'Status berhasil diupdate');

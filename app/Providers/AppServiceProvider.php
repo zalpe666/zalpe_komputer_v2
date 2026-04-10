@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\Notification;
-
+use App\Models\Brand;
+use App\Models\Category;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -41,6 +42,15 @@ class AppServiceProvider extends ServiceProvider
                     'unreadCount' => $unreadCount
                 ]);
             }
+        });
+        View::composer('components.navbar', function ($view) {
+            $brands = Brand::latest()->get();
+            $categories = Category::latest()->get();
+
+            $view->with([
+                'brands' => $brands,
+                'categories' => $categories
+            ]);
         });
     }
 }

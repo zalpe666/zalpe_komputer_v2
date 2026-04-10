@@ -94,13 +94,28 @@
                                         <img src="{{ $item->product->image }}" width="80" alt="">
                                         <div>
                                             <strong>{{ $item->product->name }}</strong><br>
-                                            <small>{{ $item->qty }} x Rp
-                                                {{ number_format($item->price) }}</small>
+                                            <small>{{ $item->qty }} x Rp {{ number_format($item->price) }}</small>
+                                            <br>
+
+                                            @if (!is_null($item->code))
+                                                {{-- Tombol toggle --}}
+                                                <button class="btn btn-sm btn-outline-secondary mt-1" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#code-{{ $item->id }}"
+                                                    aria-expanded="false" aria-controls="code-{{ $item->id }}">
+                                                    Show Code
+                                                </button>
+
+                                                {{-- Kode yang bisa disembunyikan --}}
+                                                <div class="collapse mt-1" id="code-{{ $item->id }}">
+                                                    <span class="text-success">{{ $item->code }}</span>
+                                                </div>
+                                            @endif
+
                                             @if ($trx->transaction_status == 'Completed')
                                                 <div class="mt-2">
                                                     @if (is_null($item->rating))
                                                         <a href="{{ route('customer.rating.rate.form', [$trx->id, $item->product->id]) }}"
-                                                            class="text-muted ">Rate</a>
+                                                            class="text-muted">Rate</a>
                                                     @endif
                                                 </div>
                                             @endif

@@ -137,20 +137,20 @@
                                 <td class="d-flex gap-1">
 
                                     <!-- Detail -->
-                                    <a href="#" class="btn  btn-sm" data-bs-toggle="tooltip" data-bs-placement="top"
-                                        title="Detail">
+                                    <a href="{{ route('admin.product.show', $product->id) }}"
+                                        class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Detail">
                                         <i class="bi fs-7 bi-eye-fill"></i>
                                     </a>
 
                                     <!-- Edit -->
-                                    <a href="#" class="btn btn-sm" data-bs-toggle="tooltip" data-bs-placement="top"
-                                        title="Edit">
+                                    <a href="{{ route('admin.product.edit', $product->id) }}"
+                                        class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Edit">
                                         <i class="bi fs-7 bi-pencil-fill"></i>
                                     </a>
 
                                     <!-- Delete -->
-                                    <button type="button" class="btn btn-sm btn-delete" data-id="{{ $product->id }}"
-                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus">
+                                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete"
+                                        data-id="{{ $product->id }}" data-bs-toggle="tooltip" title="Hapus">
                                         <i class="bi fs-7 bi-trash-fill"></i>
                                     </button>
 
@@ -159,6 +159,7 @@
                                         action="{{ route('admin.product.delete', $product->id) }}" method="POST"
                                         style="display:none;">
                                         @csrf
+                                        @method('DELETE')
                                     </form>
 
                                 </td>

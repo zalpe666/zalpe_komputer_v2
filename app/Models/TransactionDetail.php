@@ -13,7 +13,8 @@ class TransactionDetail extends Model
         'review',
         'price',
         'qty',
-        'total'
+        'total',
+        'code',
     ];
 
     // 🔥 RELATION

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('transaction_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->string('status')->default('pending');
+            $table->string('code')->nullable();
             $table->unsignedTinyInteger('rating')->nullable(); // 1-5
             $table->text('review')->nullable();
             $table->integer('price'); // harga saat checkout

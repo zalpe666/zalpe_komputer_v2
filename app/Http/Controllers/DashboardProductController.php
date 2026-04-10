@@ -91,19 +91,28 @@ class DashboardProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
+        $request->validate([
+            'name' => 'required',
+            'category_id' => 'required',
+            'brand_id' => 'required',
+            'type' => 'required|in:Product,Games,Digital,Steam Wallet',
+            'default_price' => 'required|numeric',
+            'stock' => 'required|integer',
+        ]);
+
         $product->update([
             'name' => $request->name,
             'category_id' => $request->category_id,
             'brand_id' => $request->brand_id,
-            'is_digital' => $request->has('is_digital'),
-            'is_games' => $request->has('is_games'),
+            'type' => $request->type,
             'default_price' => $request->default_price,
             'price' => $request->price,
-            'discount' => $request->discount,
+            'discount' => $request->discount ?? 0,
             'image' => $request->image,
-            'weight' => $request->weight,
+            'weight' => $request->weight ?? 0,
             'description' => $request->description,
             'stock' => $request->stock,
+            'is_active' => $request->has('active'),
         ]);
 
         return redirect()->route('admin.product.index')->with('success', 'Berhasil update');

@@ -31,6 +31,8 @@ Route::middleware(['auth', 'role:master,admin'])->prefix('dashboard')->as('admin
     Route::get('/product/create', [DashboardProductController::class, 'create'])->name('product.create');
     Route::post('/product/store', [DashboardProductController::class, 'store'])->name('product.store');
     Route::get('/product/edit/{id}', [DashboardProductController::class, 'edit'])->name('product.edit');
+    Route::get('/product/{id}', [DashboardProductController::class, 'show'])->name('product.show');
+
     Route::post('/product/update/{id}', [DashboardProductController::class, 'update'])->name('product.update');
     Route::post('/product/delete/{id}', [DashboardProductController::class, 'destroy'])->name('product.delete');
 
@@ -59,6 +61,9 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::delete('/cart/remove/{id}', [CustomerCartController::class, 'removeCart'])->name('cart.remove');
     Route::get('/checkout', [CustomerCheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CustomerCheckoutController::class, 'store'])->name('checkout.store');
+
+    Route::get('/checkout-now/{id}', [CustomerCheckoutController::class, 'checkoutNowIndex'])->name('checkout.now.index');
+    Route::post('/checkout-now/process', [CustomerCheckoutController::class, 'checkoutNowProcess'])->name('checkout.now.process');
     Route::get('/couriers/{district_id}', [CustomerCourierController::class, 'getByDistrict']);
     Route::get('/addresses', [CustomerAddressController::class, 'index'])->name('address.index');
     Route::get('/addresses/create', [CustomerAddressController::class, 'create'])->name('address.create');
@@ -78,7 +83,7 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [CustomerProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
     Route::get('/rating', [CustomerRatingController::class, 'index'])->name('rating.index');
     Route::post('/notifications/read-all', [CustomerNotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 
@@ -87,5 +92,5 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::get('/districts/{city}', [CustomerAddressController::class, 'getDistricts']);
 });
 
-Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
+// Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
 require __DIR__ . '/auth.php';

@@ -1,2 +1,11 @@
 ngrok http 8000
 php artisan serve --host=0.0.0.0 --port=8000
+
+php artisan migrate:fresh:except --except=products --seed
+
+-- hapus brand yg gada relasi denganp product
+SELECT b.id, b.name, COUNT(p.id) as total_product
+FROM brands b
+LEFT JOIN products p ON p.brand_id = b.id
+GROUP BY b.id, b.name
+ORDER BY total_product ASC;

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('slug')->unique();
 
             // Relasi
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('brand_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('brand_id')->nullable()->constrained()->cascadeOnDelete();
 
 
             $table->enum('type', ['Product', 'Games', 'Digital', 'Steam Wallet']);
