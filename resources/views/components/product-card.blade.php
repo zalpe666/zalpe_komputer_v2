@@ -1,5 +1,9 @@
-<div class="card h-100 position-relative">
-
+<div
+    class="card h-100 position-relative 
+    @if ($product->brand_id == 30) bg-dark text-danger border border-danger
+    @elseif($product->type == 'Steam Wallet')
+        bg-info text-white rounded-4 @endif
+">
     {{-- BADGE DISKON --}}
     @if ($product->discount > 0)
         <span class="badge bg-danger position-absolute top-0 end-0 m-2">
@@ -14,32 +18,50 @@
     <div class="card-body d-flex flex-column">
 
         {{-- NAME --}}
-        <h6 class="fw-bold text-truncate">
+        <h6 class="fw-bold text-truncate
+            {{ $product->brand_id == 30 ? 'text-danger' : '' }}">
             {{ $product->name }}
         </h6>
 
         {{-- BRAND --}}
-        <small class="text-muted">
-            {{ $product->brand->name ?? '-' }}
-        </small>
+        <span
+            style="
+                            font-size: 10px;
+                            background: {{ $product->brand_id == 30 ? '#ff0000' : '#333' }};
+                            color: white;
+                            padding: 2px 6px;
+                            border-radius: 4px;
+                            display: inline-block;
+                            width: fit-content;
+                        ">
+            {{ strtoupper($product->brand->name ?? '-') }}
+        </span>
 
-        {{-- RATING --}}
-        <small class="text-muted">
-            {{ $product->rating ? rtrim(rtrim(number_format($product->rating, 2), '0'), '.') : '-' }}
+        <small class="{{ $product->brand_id == 30 ? 'text-white' : 'text-muted' }}">
+            {{ $product->rating ?? '-' }}
             <i class="bi bi-star-fill text-warning"></i>
+            •
+            {{ number_format($product->sold ?? 0) }} sold
         </small>
 
         {{-- PRICE --}}
         <div class="mt-2 mb-3">
-            <span class="fw-bold text-success">
-                Rp {{ number_format($product->final_price) }}
-            </span>
-
             @if ($product->discount > 0)
-                <small class="text-decoration-line-through text-muted ms-1">
+                <small class="text-decoration-line-through text-muted" style="font-size: 12px">
                     Rp {{ number_format($product->default_price) }}
                 </small>
             @endif
+            <span
+                class="fw-bold
+                @if ($product->brand_id == 30) text-danger
+                    @elseif($product->type !== 'Product')
+                        text-white
+                    @else
+                        text-success @endif ">
+                Rp {{ number_format($product->final_price) }}
+            </span>
+
+
         </div>
 
         {{-- STOCK --}}
@@ -53,7 +75,7 @@
             @auth
                 @if ($product->type !== 'Product')
                     <a href="{{ route('customer.checkout.now.index', $product->id) }}"
-                        class="btn btn-primary w-100 {{ $product->is_out_of_stock ? 'disabled' : '' }}">
+                        class="btn btn-light w-100 {{ $product->is_out_of_stock ? 'disabled' : '' }}">
                         Buy Now
                     </a>
                 @else

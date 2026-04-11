@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Cart;
 use App\Models\Banner;
+use App\Models\Brand;
+use App\Models\Category;
 
 class CustomerController extends Controller
 {
@@ -22,8 +24,23 @@ class CustomerController extends Controller
             ->latest()
             ->limit(10)
             ->get();
+        $rogProducts = Product::where('is_active', true)
+            ->where('brand_id', 30)
+            ->latest()
+            ->limit(10)
+            ->get();
+        $categories = Category::limit(8)->get();
 
-        return view('customer.home.index', compact('productsLatest', 'productsDiscount', 'banners'));
+        $brands = Brand::limit(10)->get();
+
+        return view('customer.home.index', compact(
+            'productsLatest',
+            'productsDiscount',
+            'banners',
+            'rogProducts',
+            'categories',
+            'brands'
+        ));
     }
 
     public function addToCart(Request $request, $id)

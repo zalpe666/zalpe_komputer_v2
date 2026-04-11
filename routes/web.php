@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerCourierController;
 use App\Http\Controllers\CustomerDashboardController;
 use App\Http\Controllers\CustomerNotificationController;
+use App\Http\Controllers\CustomerProductController;
 use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\CustomerRatingController;
 use App\Http\Controllers\CustomerTransactionController;
@@ -55,6 +56,9 @@ Route::middleware(['auth', 'role:cashier'])->group(function () {
 });
 Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->group(function () {
     Route::get('/', [CustomerController::class, 'index'])->name('home.index');
+
+    Route::get('/product', [CustomerProductController::class, 'index'])->name('product.index');
+
     Route::get('/cart', [CustomerCartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{id}', [CustomerCartController::class, 'addToCart'])->name('cart.add');
     Route::post('/cart/update/{id}', [CustomerCartController::class, 'updateCart'])->name('cart.update');

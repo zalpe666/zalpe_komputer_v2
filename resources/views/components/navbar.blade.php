@@ -14,6 +14,9 @@
                     {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ route('customer.cart.index') }}">Cart</a>
                     </li> --}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('customer.product.index') }}">Products</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                             Categories
@@ -186,8 +189,8 @@
                         </div>
                     </div>
                 </div>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search">
+                <form class="d-flex" role="search" method="GET" action="{{ route('customer.product.index') }}">
+                    <input class="form-control me-2" type="search" name="search" placeholder="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             @endauth
