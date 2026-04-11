@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\View;
 use App\Models\Notification;
 use App\Models\Brand;
 use App\Models\Category;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -44,8 +45,14 @@ class AppServiceProvider extends ServiceProvider
             }
         });
         View::composer('components.navbar', function ($view) {
-            $brands = Brand::latest()->get();
-            $categories = Category::latest()->get();
+
+            $brands = Brand::whereHas('products', function ($q) {
+                $q->where('is_active', true);
+            })->latest()->get();
+
+            $categories = Category::whereHas('products', function ($q) {
+                $q->where('is_active', true);
+            })->latest()->get();
 
             $view->with([
                 'brands' => $brands,

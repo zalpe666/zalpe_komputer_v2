@@ -24,13 +24,16 @@
 
                         <div class="dropdown-menu p-3" style="min-width: 500px;">
                             <div class="row">
+
                                 @foreach ($categories as $category)
                                     <div class="col-4">
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item"
+                                            href="{{ route('customer.product.index', ['category[]' => $category->id]) }}">
                                             {{ $category->name }}
                                         </a>
                                     </div>
                                 @endforeach
+
                             </div>
                         </div>
                     </li>
@@ -41,13 +44,16 @@
 
                         <div class="dropdown-menu p-3" style="min-width: 500px;">
                             <div class="row">
+
                                 @foreach ($brands as $brand)
                                     <div class="col-4">
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item"
+                                            href="{{ route('customer.product.index', ['brand[]' => $brand->id]) }}">
                                             {{ $brand->name }}
                                         </a>
                                     </div>
                                 @endforeach
+
                             </div>
                         </div>
                     </li>

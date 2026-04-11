@@ -58,6 +58,7 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::get('/', [CustomerController::class, 'index'])->name('home.index');
 
     Route::get('/product', [CustomerProductController::class, 'index'])->name('product.index');
+    Route::get('/product/{slug}', [CustomerProductController::class, 'show'])->name('product.show');
 
     Route::get('/cart', [CustomerCartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{id}', [CustomerCartController::class, 'addToCart'])->name('cart.add');

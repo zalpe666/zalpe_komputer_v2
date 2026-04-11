@@ -91,10 +91,11 @@
                         <a href="" class="text-decoration-none text-dark">
                             <div class="card h-100 border-1 rounded-4 shadow-sm text-center">
                                 <div class="p-3">
-                                    <img src="{{ $category->photo_url }}" alt="{{ $category->name }}" class="img-fluid mb-3"
-                                        style="max-height: 120px; object-fit: contain;">
-                                    <h6 class="fw-semibold mb-1">
-                                        {{ $category->name }}
+                                    <a href="{{ route('customer.product.index', ['category[]' => $category->id]) }}" class="text-decoration-none text-black"> <img src="{{ $category->photo_url }}" alt="{{ $category->name }}"
+                                            class="img-fluid mb-3" style="max-height: 120px; object-fit: contain;">
+                                        <h6 class="fw-semibold mb-1">
+                                            {{ $category->name }}
+                                    </a>
                                     </h6>
                                 </div>
                             </div>
@@ -178,7 +179,7 @@
         $(document).ready(function() {
 
             $('.product-slider').slick({
-                slidesToShow: 4,
+                slidesToShow: 5,
                 slidesToScroll: 2,
                 arrows: false,
                 dots: false,
@@ -214,7 +215,7 @@
         $(document).ready(function() {
 
             $('.rog-product-slider').slick({
-                slidesToShow: 4,
+                slidesToShow: 5,
                 slidesToScroll: 2,
                 arrows: false,
                 dots: false,

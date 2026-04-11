@@ -68,4 +68,10 @@ class CustomerProductController extends Controller
 
         return view('customer.product.index', compact('products', 'categories', 'brands'));
     }
+    public function show($slug)
+    {
+        $product = Product::where('slug', $slug)->firstOrFail();
+
+        return view('customer.product.show', compact('product'));
+    }
 }
