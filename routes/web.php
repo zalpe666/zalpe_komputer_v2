@@ -6,11 +6,13 @@ use App\Http\Controllers\CustomerCheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerCourierController;
 use App\Http\Controllers\CustomerDashboardController;
+use App\Http\Controllers\CustomerKycController;
 use App\Http\Controllers\CustomerNotificationController;
 use App\Http\Controllers\CustomerProductController;
 use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\CustomerRatingController;
 use App\Http\Controllers\CustomerTransactionController;
+use App\Http\Controllers\CustomerWalletController;
 use App\Http\Controllers\DashboardBrandController;
 use App\Http\Controllers\DashboardCategoriesController;
 use App\Http\Controllers\DashboardController;
@@ -95,6 +97,16 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     // dropdown dinamis
     Route::get('/cities/{province}', [CustomerAddressController::class, 'getCities']);
     Route::get('/districts/{city}', [CustomerAddressController::class, 'getDistricts']);
+
+    Route::get('/wallet', [CustomerWalletController::class, 'index'])->name('wallet.index');
+
+    // aksi wallet (demo)
+    Route::post('/wallet/topup', [CustomerWalletController::class, 'topup'])->name('wallet.topup');
+    Route::post('/wallet/pay', [CustomerWalletController::class, 'pay'])->name('wallet.pay');
+    Route::post('/wallet/withdraw', [CustomerWalletController::class, 'withdraw'])->name('wallet.withdraw');
+
+    // KYC dummy
+    Route::post('/kyc/verify', [CustomerKycController::class, 'verify'])->name('kyc.verify');
 });
 
 // Route::post('/midtrans/callback', [MidtransController::class, 'callback']);

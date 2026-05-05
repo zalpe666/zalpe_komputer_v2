@@ -11,7 +11,7 @@
         </a>
     </li>
     <hr class="my-2">
-
+    <h6 class="mx-3">Inventory</h6>
     <li class="nav-item">
         <a class="nav-link fw-bold {{ request()->routeIs('admin.categories.index') ? 'active' : '' }}"
             href="{{ route('admin.categories.index') }}">

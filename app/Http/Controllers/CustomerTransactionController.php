@@ -9,6 +9,7 @@ use App\Models\TransactionDetail;
 use Midtrans\Config;
 use App\Models\WalletTransaction;
 use App\Models\Wallet;
+use Midtrans\CoreApi;
 
 class CustomerTransactionController extends Controller
 {
@@ -72,26 +73,20 @@ class CustomerTransactionController extends Controller
         $transaction = Transaction::where('user_id', auth()->id())
             ->findOrFail($id);
 
-        // dd($transaction->snap_token); // 🔥 sekarang ini baru jalan
-
-        if (empty($transaction->snap_token)) {
-            $this->createPayment($transaction);
-        }
-
         return view('customer.transaction.payment', compact('transaction'));
     }
     private function createPayment($transaction)
     {
-        // dd('masuk createPayment');
+        if ($transaction->snap_token) {
+            return; // 🔥 jangan generate lagi
+        }
+
         Config::$serverKey = config('midtrans.serverKey');
-        Config::$isProduction = config('midtrans.isProduction');
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
 
         $params = [
             'transaction_details' => [
                 'order_id' => $transaction->invoice,
-                'gross_amount' => $transaction->total,
+                'gross_amount' => (int)$transaction->total,
             ],
             'customer_details' => [
                 'first_name' => $transaction->user->name,
@@ -100,9 +95,6 @@ class CustomerTransactionController extends Controller
         ];
 
         $snapToken = \Midtrans\Snap::getSnapToken($params);
-
-        // DEBUG
-        // dd($snapToken);
 
         $transaction->update([
             'snap_token' => $snapToken
@@ -122,10 +114,24 @@ class CustomerTransactionController extends Controller
             'transaction_status' => 'Completed',
             'completed_date' => now(),
         ]);
+
+        // Update semua detail jadi completed
         $transaction->transactionDetails()->update([
             'status' => 'Completed'
         ]);
 
+        // 🔥 Ambil semua detail yang completed
+        $details = $transaction->transactionDetails;
+
+        // 🔥 Group by product_id dan hitung qty
+        $grouped = $details->groupBy('product_id');
+
+        foreach ($grouped as $productId => $items) {
+            $totalQty = $items->sum('qty'); // atau 'quantity' sesuaikan field kamu
+
+            // 🔥 Update sold di product (increment biar aman)
+            Product::where('id', $productId)->increment('sold', $totalQty);
+        }
 
         return back()->with('success', 'Paket berhasil diterima. Sekarang bisa beri rating produk.');
     }

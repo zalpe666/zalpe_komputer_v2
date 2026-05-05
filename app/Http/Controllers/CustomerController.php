@@ -29,7 +29,7 @@ class CustomerController extends Controller
             ->latest()
             ->limit(10)
             ->get();
-        $categories = Category::limit(8)->get();
+        $categories = Category::limit(12)->get();
 
         $brands = Brand::limit(10)->get();
 

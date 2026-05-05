@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'ktp_number',
+        'ktp_verified_at',
     ];
 
     /**

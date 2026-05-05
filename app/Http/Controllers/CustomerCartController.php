@@ -21,17 +21,19 @@ class CustomerCartController extends Controller
     {
         $product = Product::findOrFail($id);
 
+        $pcs = $request->pcs ?? 1;
+
         $cart = Cart::where('user_id', auth()->id())
             ->where('product_id', $id)
             ->first();
 
         if ($cart) {
-            $cart->increment('pcs');
+            $cart->increment('pcs', $pcs);
         } else {
             Cart::create([
                 'user_id' => auth()->id(),
                 'product_id' => $id,
-                'pcs' => 1
+                'pcs' => $pcs
             ]);
         }
 

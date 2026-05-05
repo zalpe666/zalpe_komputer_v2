@@ -1,32 +1,103 @@
 @extends('layouts.app')
 
 @section('title', 'Admin Panel')
+<style>
+    .rog-row {
+        background-image: url('https://rog.asus.com/_nuxt/img/rog_bg_pattern.2e3d71a.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
 
-@section('content')
+        position: relative;
+    }
+
+    /* optional: biar teks lebih kebaca */
+    .rog-row::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        /* gelapin sedikit */
+    }
+
+    .rog-row>.container {
+        position: relative;
+        z-index: 1;
+    }
+
+    .product-slider {
+        height: 400px;
+    }
 
     <style>
-        .rog-row {
-            background-image: url('https://rog.asus.com/_nuxt/img/rog_bg_pattern.2e3d71a.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
 
-            position: relative;
+    /* Styling Dasar Kartu */
+    .category-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent !important;
+    }
+
+    /* Wrapper Gambar agar tetap konsisten ukurannya */
+    .category-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .category-img {
+        max-width: 50px;
+        max-height: 50px;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+    /* Efek Hover */
+    .category-card:hover {
+        transform: translateY(-3px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+        border-color: #198754 !important;
+        /* Border hijau saat hover */
+    }
+
+    .category-card:hover .category-icon-wrapper {
+        background-color: #e8f5e9;
+        /* Background icon jadi hijau muda */
+    }
+
+    .category-card:hover .category-img {
+        transform: scale(1.1);
+        /* Gambar sedikit membesar */
+    }
+
+    .category-card:hover .category-name {
+        color: #198754 !important;
+    }
+
+    /* Perbaikan Responsif untuk Mobile */
+    @media (max-width: 576px) {
+        .category-icon-wrapper {
+            width: 60px;
+            height: 60px;
         }
 
-        /* optional: biar teks lebih kebaca */
-        .rog-row::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            /* gelapin sedikit */
+        .category-img {
+            max-width: 35px;
         }
 
-        .rog-row>.container {
-            position: relative;
-            z-index: 1;
+        .category-name {
+            font-size: 0.85rem;
         }
-    </style>
+    }
+</style>
+</style>
+@section('content')
+
+
     <div class="">
         {{-- Banner Slider --}}
         <div class="container">
@@ -47,56 +118,67 @@
                     <span class="carousel-control-next-icon"></span>
                 </button>
             </div>
-
         </div>
         {{-- Latest Products --}}
         <div class="container mt-4">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <div>
-                    <h3 class="m-0 p-0">Latest Product</h3>
-                    <p class="text-muted">Discover our newest arrivals</p>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="ps-3" style="border-left: 10px solid #dc3545;border-radius:10px">
+                    <h3 class="m-0">Latest Product</h3>
+                    <p class="text-muted mb-0">Discover our newest arrivals</p>
                 </div>
-                <div>
+
+                <div class="d-flex">
                     <button class="btn btn-outline-success btn-prev rounded-3 me-2">
                         <i class="bi bi-arrow-left"></i>
                     </button>
-
-                    <button class="btn btn-outline-success btn-next rounded-3 me-2">
+                    <button class="btn btn-outline-success btn-next rounded-3">
                         <i class="bi bi-arrow-right"></i>
                     </button>
                 </div>
             </div>
-            <div class="product-slider container">
-                @foreach ($productsLatest as $product)
+
+            <div class="product-slider">
+                @forelse ($productsLatest as $product)
                     <div class="pe-2">
                         <x-product-card :product="$product" />
                     </div>
-                @endforeach
+                @empty
+                    <p class="text-muted">No products available at the moment.</p>
+                @endforelse
             </div>
         </div>
         {{-- Shop by Categories --}}
-        <div class="container mt-4">
-            <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="container mt-5">
+            <div class="d-flex justify-content-between align-items-end mb-4">
                 <div>
-                    <h3 class="m-0 p-0">Shop by Categories</h3>
-                    <p class="text-muted">Pick a category and start exploring</p>
+                    <h3 class="fw-bold m-0 text-dark">Shop by Categories</h3>
+                    <p class="text-muted mb-0">Temukan komponen terbaik berdasarkan kategorinya</p>
                 </div>
-                <div>
-                    <a href="" class="text-muted">Show More <i class="bi bi-arrow-right"></i> </a>
-                </div>
+                <a href="{{ route('customer.product.index') }}" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                    Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
+                </a>
             </div>
-            <div class="row">
+
+            <div class="row g-3 g-lg-4">
                 @foreach ($categories as $category)
-                    <div class="col-6 col-md-3 mb-3">
-                        <a href="" class="text-decoration-none text-dark">
-                            <div class="card h-100 border-1 rounded-4 shadow-sm text-center">
-                                <div class="p-3">
-                                    <a href="{{ route('customer.product.index', ['category[]' => $category->id]) }}" class="text-decoration-none text-black"> <img src="{{ $category->photo_url }}" alt="{{ $category->name }}"
-                                            class="img-fluid mb-3" style="max-height: 120px; object-fit: contain;">
-                                        <h6 class="fw-semibold mb-1">
-                                            {{ $category->name }}
-                                    </a>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <a href="{{ route('customer.product.index', ['category[]' => $category->id]) }}"
+                            class="text-decoration-none group">
+                            <div class="card h-100 border-0 rounded-4 shadow-sm category-card overflow-hidden">
+                                <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center">
+                                    {{-- Image Container --}}
+                                    <div class="category-icon-wrapper mb-3">
+                                        <img src="{{ $category->photo_url }}" alt="{{ $category->name }}"
+                                            class="img-fluid category-img">
+                                    </div>
+
+                                    {{-- Category Name --}}
+                                    <h6 class="fw-bold text-dark mb-0 text-center category-name">
+                                        {{ $category->name }}
                                     </h6>
+
+                                    {{-- Optional: Item Count (Hapus jika tidak ada data) --}}
+                                    {{-- <small class="text-muted mt-1">120+ Produk</small> --}}
                                 </div>
                             </div>
                         </a>
@@ -104,6 +186,7 @@
                 @endforeach
             </div>
         </div>
+        <hr>
         <div class="container mt-4">
             <div class="row">
                 <!-- Banner 1 -->

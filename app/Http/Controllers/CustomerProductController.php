@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use App\Models\TransactionDetail;
 
 class CustomerProductController extends Controller
 {
@@ -72,6 +73,38 @@ class CustomerProductController extends Controller
     {
         $product = Product::where('slug', $slug)->firstOrFail();
 
-        return view('customer.product.show', compact('product'));
+        $reviews = TransactionDetail::with('transaction.user')
+            ->where('product_id', $product->id)
+            ->where('status', 'Completed')
+            ->where('rating', '>', 0)
+            ->latest()
+            ->get();
+
+        $allRatings = TransactionDetail::where('product_id', $product->id)
+            ->where('status', 'Completed')
+            ->where('rating', '>', 0);
+
+        $totalRating = $allRatings->count();
+        $totalReview = $allRatings->whereNotNull('review')->count();
+
+        $avgRating = $allRatings->avg('rating') ?? 0;
+
+        // hitung per bintang
+        $ratingCounts = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $ratingCounts[$i] = TransactionDetail::where('product_id', $product->id)
+                ->where('status', 'Completed')
+                ->where('rating', $i)
+                ->count();
+        }
+
+        return view('customer.product.show', compact(
+            'product',
+            'reviews',
+            'totalRating',
+            'totalReview',
+            'avgRating',
+            'ratingCounts'
+        ));
     }
 }

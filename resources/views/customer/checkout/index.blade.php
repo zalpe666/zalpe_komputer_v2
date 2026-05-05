@@ -1,201 +1,395 @@
 @extends('layouts.app')
-@section('title', 'Checkout')
+@section('title', 'Selesaikan Pembayaran - Zalpe Komputer')
 
 @section('content')
-<div class="container mt-4">
-    <form action="{{ route('customer.checkout.store') }}" method="POST" id="checkout-form">
-        @csrf
-        <input type="hidden" name="carts" value="{{ request()->carts }}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
 
-        <div class="row">
-            {{-- 🛒 LIST PRODUK & OPTIONS --}}
-            <div class="col-md-8">
-                
-                @if(session('error'))
-                    <div class="alert alert-danger">{{ session('error') }}</div>
-                @endif
+        .checkout-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
 
-                <h4 class="mb-3">Checkout</h4>
+        /* Custom Radio Card */
+        .selectable-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid #e9ecef;
+            position: relative;
+        }
 
-                @foreach ($carts as $cart)
-                    <div class="card mb-3">
-                        <div class="card-body d-flex align-items-center">
-                            <img src="{{ $cart->product->image }}" width="80" class="me-3">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">{{ $cart->product->name }}</h6>
-                                <small class="text-muted">Rp {{ number_format($cart->product->final_price) }}</small>
-                                <div class="mt-2">Qty: <strong>{{ $cart->pcs }}</strong></div>
+        .selectable-card:hover {
+            border-color: #198754;
+            background-color: #f0fdf4;
+        }
+
+        .form-check-input-custom {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .form-check-input-custom:checked+.selectable-card {
+            border-color: #198754;
+            background-color: #f0fdf4;
+        }
+
+        .form-check-input-custom:checked+.selectable-card .bi-check-circle-fill {
+            display: block !important;
+        }
+
+        .product-img-mini {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+
+    <div class="container py-5">
+        <form action="{{ route('customer.checkout.store') }}" method="POST" id="checkout-form">
+            @csrf
+            <input type="hidden" name="carts" value="{{ request()->carts }}">
+
+            <div class="row g-4">
+                {{-- 🛒 SISI KIRI: FORM CHECKOUT --}}
+                <div class="col-lg-8">
+                    @if (session('error'))
+                        <div class="alert alert-danger border-0 shadow-sm rounded-4">{{ session('error') }}</div>
+                    @endif
+
+                    <h3 class="fw-bold mb-4">Checkout</h3>
+
+                    {{-- 📍 SECTION 1: ALAMAT PENGIRIMAN --}}
+                    <div class="card checkout-card mb-4">
+                        <div class="card-body p-4">
+                            <div class="section-title text-success">
+                                <i class="bi bi-geo-alt-fill"></i> Alamat Pengiriman
                             </div>
-                            <div class="text-end">
-                                <div class="fw-bold text-success">
-                                    Rp {{ number_format($cart->product->final_price * $cart->pcs) }}
+
+                            <div class="row g-3">
+                                @foreach ($addresses as $address)
+                                    <div class="col-12">
+                                        <input type="radio" name="address_id" value="{{ $address->id }}"
+                                            id="address-{{ $address->id }}" class="form-check-input-custom"
+                                            data-district="{{ $address->district_id }}" required>
+                                        <label for="address-{{ $address->id }}"
+                                            class="selectable-card w-100 p-3 rounded-4 d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <span class="badge bg-success mb-2">{{ $address->name }}</span>
+                                                <p class="mb-1 fw-bold text-dark">{{ auth()->user()->name }}</p>
+                                                <p class="mb-0 text-muted small">{{ $address->address }}</p>
+                                            </div>
+                                            <i class="bi bi-check-circle-fill text-success fs-4 d-none"></i>
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <a href="{{ route('customer.address.index') }}"
+                                class="btn btn-link btn-sm text-success fw-bold p-0 mt-3">+ Tambah Alamat Baru</a>
+                        </div>
+                    </div>
+
+                    {{-- 📦 SECTION 2: ITEM PRODUK --}}
+                    <div class="card checkout-card mb-4">
+                        <div class="card-body p-4">
+                            <div class="section-title">
+                                <i class="bi bi-box-seam"></i> Pesanan Anda
+                            </div>
+                            @foreach ($carts as $cart)
+                                <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                                    <img src="{{ $cart->product->image }}" class="product-img-mini me-3">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 fw-bold text-dark text-truncate" style="max-width: 250px;">
+                                            {{ $cart->product->name }}</h6>
+                                        <small class="text-muted">{{ $cart->pcs }} unit x Rp
+                                            {{ number_format($cart->product->final_price) }}</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="fw-bold text-dark">
+                                            Rp {{ number_format($cart->product->final_price * $cart->pcs) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- 🚚 SECTION 3: JASA PENGIRIMAN --}}
+                    <div class="card checkout-card mb-4">
+                        <div class="card-body p-4">
+                            <div class="section-title">
+                                <i class="bi bi-truck"></i> Pilihan Pengiriman
+                            </div>
+                            <div id="courier-list" class="row g-3">
+                                <div class="col-12 text-center py-4">
+                                    <i class="bi bi-geo text-muted fs-1 opacity-25"></i>
+                                    <p class="text-muted mt-2 small">Silakan pilih alamat terlebih dahulu</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                @endforeach
 
-                {{-- 📍 PILIH ALAMAT --}}
-                <h5 class="mt-4">Shipping Address</h5>
-                @foreach ($addresses as $address)
-                    <div class="border p-3 mb-2 rounded cursor-pointer">
-                        <label class="w-100 mb-0">
-                            <input type="radio" name="address_id" value="{{ $address->id }}" data-district="{{ $address->district_id }}" required>
-                            <strong>{{ $address->name }}</strong><br>
-                            {{ $address->address }}
-                        </label>
+                    {{-- 💳 SECTION 4: METODE PEMBAYARAN --}}
+                    <div class="card checkout-card mb-4">
+                        <div class="card-body p-4">
+                            <div class="section-title">
+                                <i class="bi bi-wallet2"></i> Metode Pembayaran
+                            </div>
+                            <div class="row g-3">
+                                {{-- 💳 TRANSFER BANK --}}
+                                <div class="col-md-4">
+                                    <input type="radio" name="payment_method" value="midtrans" id="pay_bank"
+                                        class="form-check-input-custom" required>
+                                    <label for="pay_bank" class="selectable-card w-100 p-3 rounded-4 text-center h-100">
+                                        <i class="bi bi-bank fs-2 mb-2 d-block"></i>
+                                        <span class="fw-bold d-block small">Transfer Bank / VA</span>
+                                        <i
+                                            class="bi bi-check-circle-fill text-success position-absolute top-0 end-0 p-2 d-none"></i>
+                                    </label>
+                                </div>
+
+                                {{-- 📱 E-WALLET --}}
+                                <div class="col-md-4">
+                                    <input type="radio" name="payment_method" value="wallet" id="pay_wallet"
+                                        class="form-check-input-custom" required>
+                                    <label for="pay_wallet" class="selectable-card w-100 p-3 rounded-4 text-center h-100">
+                                        <i class="bi bi-phone fs-2 mb-2 d-block"></i>
+                                        <span class="fw-bold d-block small">E-Wallet (QRIS)</span>
+                                        <i
+                                            class="bi bi-check-circle-fill text-success position-absolute top-0 end-0 p-2 d-none"></i>
+                                    </label>
+                                </div>
+
+                                {{-- 🚚 COD --}}
+                                <div class="col-md-4">
+                                    <input type="radio" name="payment_method" value="cod" id="pay_cod"
+                                        class="form-check-input-custom" required>
+                                    <label for="pay_cod" class="selectable-card w-100 p-3 rounded-4 text-center h-100">
+                                        <i class="bi bi-hand-index-thumb fs-2 mb-2 d-block"></i>
+                                        <span class="fw-bold d-block small">COD (Bayar di Tempat)</span>
+                                        <i
+                                            class="bi bi-check-circle-fill text-success position-absolute top-0 end-0 p-2 d-none"></i>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {{-- 🔥 PILIH BANK (MUNCUL KALAU PILIH VA) --}}
+                            <div id="bank-options" class="mt-3 d-none">
+                                <label class="fw-bold mb-2">Pilih Bank</label>
+
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <input type="radio" name="bank" value="bca" id="bank_bca"
+                                            class="form-check-input-custom">
+                                        <label for="bank_bca" class="selectable-card p-2 text-center rounded-3">
+                                            BCA
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <input type="radio" name="bank" value="bni" id="bank_bni"
+                                            class="form-check-input-custom">
+                                        <label for="bank_bni" class="selectable-card p-2 text-center rounded-3">
+                                            BNI
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <input type="radio" name="bank" value="mandiri" id="bank_mandiri"
+                                            class="form-check-input-custom">
+                                        <label for="bank_mandiri" class="selectable-card p-2 text-center rounded-3">
+                                            Mandiri
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                @endforeach
-
-                {{-- 🚚 PILIH KURIR (Digenarate JS) --}}
-                <h5 class="mt-4">Courier</h5>
-                <div id="courier-list" class="mb-4">
-                    <div class="text-muted">Pilih alamat terlebih dahulu...</div>
                 </div>
 
-                {{-- 💳 PAYMENT METHOD --}}
-                <h5 class="mt-4">Payment Method</h5>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" name="payment_method" value="midtrans" id="pay_bank" required>
-                    <label class="form-check-label" for="pay_bank">Bank Transfer / Virtual Account</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" name="payment_method" value="wallet" id="pay_wallet" required>
-                    <label class="form-check-label" for="pay_wallet">E-Wallet</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" name="payment_method" value="cod" id="pay_cod" required>
-                    <label class="form-check-label" for="pay_cod">Cash on Delivery (COD)</label>
-                </div>
+                {{-- 💰 SISI KANAN: ORDER SUMMARY --}}
+                <div class="col-lg-4">
+                    <div class="card checkout-card sticky-top" style="top: 100px;">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Ringkasan Pesanan</h5>
 
-            </div>
+                            @php
+                                $subtotal = $carts->sum(
+                                    fn($c) => ($c->product->price ?? $c->product->default_price) * $c->pcs,
+                                );
+                                $discount_by_merchant = $carts->sum(
+                                    fn($c) => (($c->product->price ?? $c->product->default_price) -
+                                        $c->product->final_price) *
+                                        $c->pcs,
+                                );
+                                $subtotal_final = $subtotal - $discount_by_merchant;
+                            @endphp
 
-            {{-- 💰 SUMMARY --}}
-            <div class="col-md-4">
-                <div class="card sticky-top" style="top: 20px;">
-                    <div class="card-body">
-                        <h5 class="mb-3">Summary</h5>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Total Harga</span>
+                                <span class="fw-medium">Rp {{ number_format($subtotal) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 text-danger">
+                                <span class="small">Total Diskon</span>
+                                <span class="small fw-bold">- Rp {{ number_format($discount_by_merchant) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Ongkos Kirim</span>
+                                <span class="fw-bold" id="ongkir">Rp 0</span>
+                            </div>
 
-                        @php
-                            $subtotal = $carts->sum(fn($c) => $c->product->default_price * $c->pcs);
-                            $discount_by_merchant = $carts->sum(fn($c) => ($c->product->default_price - $c->product->final_price) * $c->pcs);
-                            $subtotal_final = $subtotal - $discount_by_merchant;
-                        @endphp
+                            <hr class="my-3">
 
-                        <div class="d-flex justify-content-between">
-                            <span>Subtotal</span>
-                            <strong>Rp {{ number_format($subtotal) }}</strong>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">Total Tagihan</h5>
+                                <h4 class="fw-bold text-success mb-0" id="total">Rp
+                                    {{ number_format($subtotal_final) }}</h4>
+                            </div>
+
+                            <button type="submit" class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow-sm">
+                                Selesaikan Pembayaran
+                            </button>
+
+                            <div class="mt-3 text-center">
+                                <small class="text-muted"><i class="bi bi-shield-lock-fill me-1"></i> Pembayaran Aman &
+                                    Terenkripsi</small>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between text-success">
-                            <span>Discount</span>
-                            <strong>- Rp {{ number_format($discount_by_merchant) }}</strong>
-                        </div>
-                        <div class="d-flex justify-content-between mt-2">
-                            <span>Ongkir</span>
-                            <strong id="ongkir">Rp 0</strong>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between fs-5">
-                            <span>Total</span>
-                            <strong id="total">Rp {{ number_format($subtotal_final) }}</strong>
-                        </div>
-
-                        <button type="submit" class="btn btn-success w-100 mt-4 fs-5">
-                            Bayar Sekarang
-                        </button>
                     </div>
                 </div>
             </div>
-
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 @endsection
-
 @push('script')
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let subtotalFinal = {{ $subtotal_final }};
+            let totalWeight = {{ $totalWeight ?? 1000 }};
 
-        // 📌 Variabel dasar untuk render UI text
-        let subtotalFinal = {{ $subtotal_final }};
-        let totalWeight = {{ $totalWeight ?? 1000 }};
-        
-        const addressRadios = document.querySelectorAll('input[name="address_id"]');
-        const courierList = document.getElementById('courier-list');
-        const ongkirText = document.getElementById('ongkir');
-        const totalText = document.getElementById('total');
-        const checkoutForm = document.getElementById('checkout-form');
+            const addressRadios = document.querySelectorAll('input[name="address_id"]');
+            const courierList = document.getElementById('courier-list');
+            const ongkirText = document.getElementById('ongkir');
+            const totalText = document.getElementById('total');
+            const checkoutForm = document.getElementById('checkout-form');
 
-        function formatRupiah(number) {
-            return 'Rp ' + number.toLocaleString('id-ID');
-        }
+            function formatRupiah(number) {
+                return 'Rp ' + number.toLocaleString('id-ID');
+            }
 
-        // 📌 1. Saat alamat berubah, ambil kurir 
-        addressRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                let districtId = this.dataset.district;
-                courierList.innerHTML = `<span class="text-muted">Loading kurir...</span>`;
-                ongkirText.innerText = 'Rp 0';
-                totalText.innerText = formatRupiah(subtotalFinal); // Reset total
+            // 📌 Ambil data kurir saat alamat dipilih
+            addressRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    let districtId = this.dataset.district;
 
-                fetch(`/home/couriers/${districtId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (!data.length) {
-                            courierList.innerHTML = `<div class="text-danger">Tidak ada layanan kurir ke area ini.</div>`;
-                            return;
-                        }
+                    // Loading UI
+                    courierList.innerHTML = `
+                    <div class="col-12 text-center py-4">
+                        <div class="spinner-border text-success" role="status"></div>
+                        <p class="text-muted mt-2">Mencari layanan kurir...</p>
+                    </div>
+                `;
+                    ongkirText.innerText = 'Rp 0';
+                    totalText.innerText = formatRupiah(subtotalFinal);
 
-                        let html = '';
-                        data.forEach(courier => {
-                            // Trik: Simpan data kurir sebagai JSON string di VALUE input
-                            // Agar PHP tinggal json_decode() pas form di submit
-                            let valueJson = JSON.stringify({
-                                name: courier.name,
-                                service: courier.service,
-                                price_per_kg: courier.price_per_kg,
-                                estimated_delivery_time: courier.estimated_delivery_time
-                            });
+                    fetch(`/home/couriers/${districtId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (!data.length) {
+                                courierList.innerHTML =
+                                    `<div class="col-12 text-center py-4 text-danger">Layanan tidak tersedia.</div>`;
+                                return;
+                            }
 
-                            html += `
-                                <div class="border p-2 mb-2 rounded cursor-pointer label-radio">
-                                    <label class="w-100 mb-0">
-                                        <input type="radio" name="courier" value='${valueJson}' data-price="${courier.price_per_kg}" required>
-                                        <strong>${courier.name} (${courier.service})</strong><br>
-                                        ${formatRupiah(courier.price_per_kg)} / kg <br>
-                                        <small class="text-muted">Estimasi: ${courier.estimated_delivery_time}</small>
+                            let html = '';
+                            data.forEach((courier, index) => {
+                                let valueJson = JSON.stringify({
+                                    name: courier.name,
+                                    service: courier.service,
+                                    price_per_kg: courier.price_per_kg,
+                                    estimated_delivery_time: courier
+                                        .estimated_delivery_time
+                                });
+
+                                html += `
+                                <div class="col-md-6">
+                                    <input type="radio" name="courier" value='${valueJson}' id="courier-${index}" 
+                                        class="form-check-input-custom" data-price="${courier.price_per_kg}" required>
+                                    <label for="courier-${index}" class="selectable-card w-100 p-3 rounded-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fw-bold text-dark">${courier.name}</span>
+                                            <span class="text-success fw-bold small">${formatRupiah(courier.price_per_kg)}/kg</span>
+                                        </div>
+                                        <small class="text-muted d-block mt-1">${courier.service} (${courier.estimated_delivery_time})</small>
+                                        <i class="bi bi-check-circle-fill text-success position-absolute top-0 end-0 p-2 d-none"></i>
                                     </label>
                                 </div>
                             `;
+                            });
+                            courierList.innerHTML = html;
+                        })
+                        .catch(err => {
+                            courierList.innerHTML =
+                                `<div class="col-12 text-center py-4 text-danger">Gagal memuat data kurir.</div>`;
                         });
-                        courierList.innerHTML = html;
-                    })
-                    .catch(err => {
-                        courierList.innerHTML = `<div class="text-danger">Gagal mengambil data kurir.</div>`;
-                    });
+                });
+            });
+
+            // 📌 Hitung total ongkir saat kurir dipilih
+            document.addEventListener('change', function(e) {
+                if (e.target.name === 'courier') {
+                    let pricePerKg = parseInt(e.target.dataset.price);
+                    let ongkir = Math.ceil(totalWeight / 1000) * pricePerKg;
+
+                    ongkirText.innerText = formatRupiah(ongkir);
+                    totalText.innerText = formatRupiah(subtotalFinal + ongkir);
+                }
+            });
+
+            // 📌 Validasi COD
+            checkoutForm.addEventListener('submit', function(e) {
+                let paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value;
+                if (paymentMethod === 'cod' && subtotalFinal > 1000000) {
+                    e.preventDefault();
+                    alert("Ups! COD hanya tersedia untuk pesanan di bawah Rp 1.000.000");
+                }
             });
         });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const payBank = document.getElementById("pay_bank");
+            const payWallet = document.getElementById("pay_wallet");
+            const payCod = document.getElementById("pay_cod");
+            const bankOptions = document.getElementById("bank-options");
 
-        // 📌 2. Saat kurir dipilih, ubah teks Ongkir & Total di sebelah kanan
-        document.addEventListener('change', function(e) {
-            if (e.target.name === 'courier') {
-                let pricePerKg = parseInt(e.target.dataset.price);
-                let ongkir = Math.ceil(totalWeight / 1000) * pricePerKg;
-                
-                ongkirText.innerText = formatRupiah(ongkir);
-                totalText.innerText = formatRupiah(subtotalFinal + ongkir);
+            function toggleBank() {
+                if (payBank.checked) {
+                    bankOptions.classList.remove("d-none");
+                } else {
+                    bankOptions.classList.add("d-none");
+
+                    // reset pilihan bank
+                    document.querySelectorAll('input[name="bank"]').forEach(el => el.checked = false);
+                }
             }
-        });
 
-        // 📌 3. Validasi COD ringan di JS biar user ngga perlu nunggu load page kalau salah
-        checkoutForm.addEventListener('submit', function(e) {
-            let paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value;
-            if (paymentMethod === 'cod' && subtotalFinal > 1000000) {
-                e.preventDefault(); // Cegah form dikirim
-                alert("Metode pembayaran COD hanya berlaku untuk subtotal di bawah Rp 1.000.000");
-            }
+            payBank.addEventListener("change", toggleBank);
+            payWallet.addEventListener("change", toggleBank);
+            payCod.addEventListener("change", toggleBank);
         });
-
-    });
-</script>
+    </script>
 @endpush
