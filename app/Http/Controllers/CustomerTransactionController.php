@@ -10,6 +10,8 @@ use Midtrans\Config;
 use App\Models\WalletTransaction;
 use App\Models\Wallet;
 use Midtrans\CoreApi;
+use App\Services\WalletService;
+use App\Services\NotificationService;
 
 class CustomerTransactionController extends Controller
 {
@@ -132,46 +134,65 @@ class CustomerTransactionController extends Controller
             // 🔥 Update sold di product (increment biar aman)
             Product::where('id', $productId)->increment('sold', $totalQty);
         }
+        $cashbackAmount = min($transaction->total * 0.05, 50000); // max 50rb
 
+        if ($transaction->payment_method == 'wallet') {
+            WalletService::add(
+                auth()->id(),
+                $cashbackAmount,
+                'Cashback order #' . $transaction->invoice
+            );
+            NotificationService::create(
+                auth()->id(),
+                'Cashback Received',
+                'You received a cashback of Rp ' . number_format($cashbackAmount, 0, ',', '.') . ' for your order #' . $transaction->invoice,
+                'Shopping',
+                '/home/wallet',
+            );
+        }
         return back()->with('success', 'Paket berhasil diterima. Sekarang bisa beri rating produk.');
     }
     public function cancel(Request $request, $id)
     {
         $transaction = Transaction::findOrFail($id);
 
-        // hanya bisa cancel Packing / Waiting Payment
-        if (!in_array($transaction->transaction_status, ['Packing', 'Waiting Payment'])) {
+        if (!in_array($transaction->transaction_status, ['Packing', 'Waiting Payment', 'Pending'])) {
             return back()->with('error', 'Transaksi tidak bisa dibatalkan');
         }
 
         $user = $transaction->user;
 
+        // cek apakah transaksi sudah dibayar
+        $isPaid = in_array($transaction->payment_status, ['Paid', 'Success']);
+
         // update status transaksi
         $transaction->transaction_status = 'Cancelled';
-        $transaction->payment_status = $transaction->payment_method === 'cod' ? 'Unpaid' : 'Refunded';
+        $transaction->payment_status = $isPaid
+            ? 'Refunded'
+            : ($transaction->payment_method === 'cod' ? 'Unpaid' : 'Cancelled');
+
+        $transaction->canceled_date = now();
         $transaction->save();
 
-        // 🔥 handle refund ke wallet
-        if (in_array($transaction->payment_method, ['midtrans', 'wallet'])) {
-            // ambil wallet
-            $wallet = Wallet::firstOrCreate(['user_id' => $user->id]);
+        // refund hanya jika SUDAH dibayar
+        if (
+            $isPaid &&
+            in_array($transaction->payment_method, ['midtrans', 'wallet'])
+        ) {
 
-            WalletTransaction::create([
-                'wallet_id'   => $wallet->id,
-                'type'        => 'income',
-                'amount'      => $transaction->total,
-                'description' => 'Refund dari transaksi ' . $transaction->invoice,
-                'status'      => $user->ktp_verified_at ? 'verified' : 'pending', // pending kalau belum KTP verified
-            ]);
+            WalletService::refund(
+                $transaction->user_id,
+                $transaction->total,
+                'Refund for order #' . $transaction->invoice
+            );
 
-            // auto update balance kalau sudah verified
-            if ($user->ktp_verified_at) {
-                $wallet->balance = $wallet->walletTransactions()
-                    ->where('status', 'verified')
-                    ->sum('amount')
-                    - $wallet->walletTransactions()->where('type', 'expense')->sum('amount');
-                $wallet->save();
-            }
+            NotificationService::create(
+                $transaction->user_id,
+                'Refund Successful',
+                'Refund for order #' . $transaction->invoice . ' has been successfully added to your Zalpe Pay balance',
+                'Shopping',
+                '/home/transaction/' . $transaction->id,
+            );
         }
 
         return back()->with('success', 'Transaksi berhasil dibatalkan');

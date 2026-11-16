@@ -70,7 +70,7 @@
     <div class="row g-5">
         
         {{-- 📸 LEFT SIDE: IMAGE GALLERY --}}
-        <div class="col-lg-5">
+        <div class="col-lg-4">
             <div class="product-gallery">
                 <div class="card border-0 shadow-sm zoom-container" id="zoomContainer">
                     <img id="zoomImage" src="{{ $product->image }}" 
@@ -86,7 +86,7 @@
         </div>
 
         {{-- 📝 MIDDLE SIDE: PRODUCT INFO --}}
-        <div class="col-lg-4">
+        <div class="col-lg-5">
             {{-- Category & Brand --}}
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-2">

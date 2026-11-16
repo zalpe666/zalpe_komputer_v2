@@ -13,11 +13,16 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use Midtrans\Config;
 use Midtrans\CoreApi;
+use App\Models\Wallet;
+use App\Services\NotificationService;
+use App\Services\WalletService;
 
 class CustomerCheckoutController extends Controller
 {
     public function index(Request $request)
     {
+        $wallet = Wallet::where('user_id', auth()->id())->first();
+        $walletBalance = $wallet?->balance ?? 0;
         $cartIds = array_map('intval', explode(',', $request->carts));
         $carts = Cart::with('product')->whereIn('id', $cartIds)->where('user_id', auth()->id())->get();
 
@@ -31,8 +36,24 @@ class CustomerCheckoutController extends Controller
         $totalWeight = $carts->sum(function ($c) {
             return ($c->product->weight ?? 1000) * $c->pcs;
         });
+        $subtotal = $carts->sum(function ($c) {
+            return $c->product->default_price * $c->pcs;
+        });
 
-        return view('customer.checkout.index', compact('carts', 'addresses', 'totalWeight'));
+        $discount_by_merchant = $carts->sum(function ($c) {
+            return ($c->product->default_price - $c->product->final_price) * $c->pcs;
+        });
+
+        $subtotal_final = $subtotal - $discount_by_merchant;
+        return view('customer.checkout.index', compact(
+            'carts',
+            'addresses',
+            'totalWeight',
+            'walletBalance',
+            'subtotal',
+            'discount_by_merchant',
+            'subtotal_final'
+        ));
     }
 
     public function store(Request $request)
@@ -42,7 +63,7 @@ class CustomerCheckoutController extends Controller
             'carts' => 'required',
             'address_id' => 'required',
             'courier' => 'required',
-            'bank' => 'required',
+            'bank' => 'required_if:payment_method,midtrans',
             'payment_method' => 'required',
         ]);
 
@@ -89,7 +110,7 @@ class CustomerCheckoutController extends Controller
                 $date = date('dmY');
                 $time = date('His');
                 $randomCode = rand(100, 999);
-                $invoice = "ZK/{$date}/{$time}/{$randomCode}";
+                $invoice = "ZK-{$date}-{$time}-{$randomCode}";
 
                 // 🔥 SIMPAN TRANSACTION
                 $transaction = Transaction::create([
@@ -115,7 +136,28 @@ class CustomerCheckoutController extends Controller
 
                 ]);
                 // 🔥 HIT MIDTRANS (HANYA JIKA BANK TRANSFER)
-                if ($request->payment_method === 'midtrans') {
+                // 🔥 HANDLE PAYMENT
+
+                if ($request->payment_method === 'wallet') {
+                    WalletService::deduct(
+                        auth()->id(),
+                        $total,
+                        'Pembayaran order #' . $invoice
+                    );
+                    NotificationService::create(
+                        auth()->id(),
+                        'Payment Successful',
+                        'Order #' . $invoice . ' has been successfully paid using Zalpe Pay',
+                        'Shopping',
+                        '/home/transaction/' . $transaction->id,
+                    );
+                    // ✅ langsung paid
+                    $transaction->update([
+                        'payment_status' => 'Paid',
+                        'payment_date' => now(),
+                        'transaction_status' => 'Packing',
+                    ]);
+                } elseif ($request->payment_method === 'midtrans') {
 
                     Config::$serverKey = config('midtrans.serverKey');
                     Config::$isProduction = config('midtrans.isProduction');
@@ -123,7 +165,6 @@ class CustomerCheckoutController extends Controller
                     // 🔥 CEK BANK
                     if ($request->bank === 'mandiri') {
 
-                        // ✅ Mandiri pakai echannel
                         $params = [
                             'transaction_details' => [
                                 'order_id' => $invoice,
@@ -137,7 +178,6 @@ class CustomerCheckoutController extends Controller
                         ];
                     } else {
 
-                        // ✅ BCA / BNI / BRI
                         $params = [
                             'transaction_details' => [
                                 'order_id' => $invoice,
@@ -157,24 +197,28 @@ class CustomerCheckoutController extends Controller
                     $billKey = null;
                     $expiry = $response->expiry_time ?? null;
 
-                    // ✅ VA (BCA, BNI, BRI)
                     if (!empty($response->va_numbers)) {
                         $vaNumber = $response->va_numbers[0]->va_number;
                     }
 
-                    // ✅ Mandiri
                     if (!empty($response->bill_key)) {
                         $billKey = $response->bill_key;
                         $billerCode = $response->biller_code;
                     }
 
-                    // 🔥 SIMPAN KE DB
                     $transaction->update([
                         'va_number'   => $vaNumber,
                         'biller_code' => $billerCode,
                         'bill_key'    => $billKey,
                         'expired_at'  => $expiry,
                         'bank'        => $request->bank,
+                        'payment_status' => 'Pending',
+                    ]);
+                } elseif ($request->payment_method === 'cod') {
+
+                    $transaction->update([
+                        'payment_status' => 'COD',
+                        'transaction_status' => 'Waiting Courier',
                     ]);
                 }
                 // 🔥 SIMPAN DETAIL & KURANGI STOCK
@@ -224,7 +268,7 @@ class CustomerCheckoutController extends Controller
         $date = date('dmY');
         $time = date('His');
         $randomCode = rand(100, 999);
-        $invoice = "ZK/{$date}/{$time}/{$randomCode}";
+        $invoice = "ZK-{$date}-{$time}-{$randomCode}";
         $shipping_cost = 0;
         // Buat transaksi
         $transaction = Transaction::create([

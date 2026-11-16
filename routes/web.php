@@ -109,5 +109,4 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::post('/kyc/verify', [CustomerKycController::class, 'verify'])->name('kyc.verify');
 });
 
-// Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
 require __DIR__ . '/auth.php';

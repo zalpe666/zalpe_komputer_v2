@@ -57,6 +57,30 @@
             gap: 10px;
         }
     </style>
+    <style>
+        /* Custom Styling untuk Logo dan Kartu Bank */
+        .bank-card {
+            border-width: 2px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .bank-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Ukuran logo agar seragam */
+        .bank-logo {
+            height: 30px;
+            object-fit: contain;
+        }
+
+        /* Efek ketika radio button dipilih */
+        .btn-check:checked+.bank-card {
+            border-color: #000;
+            background-color: #f0fdf4;
+        }
+    </style>
 
     <div class="container py-5">
         <form action="{{ route('customer.checkout.store') }}" method="POST" id="checkout-form">
@@ -162,12 +186,39 @@
                                 </div>
 
                                 {{-- 📱 E-WALLET --}}
+                                @php
+                                    $isWalletEnough = $walletBalance >= $subtotal;
+                                @endphp
+
                                 <div class="col-md-4">
                                     <input type="radio" name="payment_method" value="wallet" id="pay_wallet"
-                                        class="form-check-input-custom" required>
-                                    <label for="pay_wallet" class="selectable-card w-100 p-3 rounded-4 text-center h-100">
-                                        <i class="bi bi-phone fs-2 mb-2 d-block"></i>
-                                        <span class="fw-bold d-block small">E-Wallet (QRIS)</span>
+                                        class="form-check-input-custom" {{ !$isWalletEnough ? 'disabled' : '' }} required>
+
+                                    <label for="pay_wallet"
+                                        class="selectable-card w-100 p-3 rounded-4 text-center h-100 {{ !$isWalletEnough ? 'opacity-50' : '' }}">
+
+                                        <i class="bi bi-wallet2 fs-2 mb-2 d-block"></i>
+
+                                        <span class="fw-bold d-block small">
+                                            Zalpe Pay
+                                        </span>
+
+                                        {{-- 💰 SALDO --}}
+                                        <small class="d-block mt-1 text-muted">
+                                            Saldo: Rp {{ number_format($walletBalance) }}
+                                        </small>
+
+                                        {{-- ⚠️ STATUS --}}
+                                        @if (!$isWalletEnough)
+                                            <small class="text-danger d-block mt-1">
+                                                Saldo tidak cukup
+                                            </small>
+                                        @else
+                                            <small class="text-success d-block mt-1">
+                                                Bisa digunakan
+                                            </small>
+                                        @endif
+
                                         <i
                                             class="bi bi-check-circle-fill text-success position-absolute top-0 end-0 p-2 d-none"></i>
                                     </label>
@@ -187,31 +238,49 @@
                             </div>
 
                             {{-- 🔥 PILIH BANK (MUNCUL KALAU PILIH VA) --}}
-                            <div id="bank-options" class="mt-3 d-none">
-                                <label class="fw-bold mb-2">Pilih Bank</label>
+                            <div id="bank-options" class="mt-4 d-none">
+                                <label class="fw-bold mb-3 text-dark">Pilih Bank Pembayaran</label>
 
-                                <div class="row g-2">
-                                    <div class="col-md-4">
+                                <div class="row g-3">
+                                    {{-- Bank BCA --}}
+                                    <div class="col-12 col-sm-4">
                                         <input type="radio" name="bank" value="bca" id="bank_bca"
-                                            class="form-check-input-custom">
-                                        <label for="bank_bca" class="selectable-card p-2 text-center rounded-3">
-                                            BCA
+                                            class="btn-check" autocomplete="off">
+                                        <label
+                                            class="btn btn-outline-light text-dark w-100 p-3 bank-card border rounded-4 d-flex flex-column align-items-center justify-content-center h-100"
+                                            for="bank_bca">
+                                            <!-- Ganti src dengan path logo di folder public Laravel Anda -->
+                                            <img src="https://simulator.sandbox.midtrans.com/assets/images/payment_partners/bank_transfer/bca_va.png"
+                                                alt="BCA" class="bank-logo mb-2">
+                                            <span class="fw-semibold small">BCA</span>
                                         </label>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    {{-- Bank BNI --}}
+                                    <div class="col-12 col-sm-4">
                                         <input type="radio" name="bank" value="bni" id="bank_bni"
-                                            class="form-check-input-custom">
-                                        <label for="bank_bni" class="selectable-card p-2 text-center rounded-3">
-                                            BNI
+                                            class="btn-check" autocomplete="off">
+                                        <label
+                                            class="btn btn-outline-light text-dark w-100 p-3 bank-card border rounded-4 d-flex flex-column align-items-center justify-content-center h-100"
+                                            for="bank_bni">
+                                            <!-- Ganti src dengan path logo di folder public Laravel Anda -->
+                                            <img src="https://simulator.sandbox.midtrans.com/assets/images/payment_partners/bank_transfer/bni_va.png"
+                                                alt="BNI" class="bank-logo mb-2">
+                                            <span class="fw-semibold small">BNI</span>
                                         </label>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    {{-- Bank Mandiri --}}
+                                    <div class="col-12 col-sm-4">
                                         <input type="radio" name="bank" value="mandiri" id="bank_mandiri"
-                                            class="form-check-input-custom">
-                                        <label for="bank_mandiri" class="selectable-card p-2 text-center rounded-3">
-                                            Mandiri
+                                            class="btn-check" autocomplete="off">
+                                        <label
+                                            class="btn btn-outline-light text-dark w-100 p-3 bank-card border rounded-4 d-flex flex-column align-items-center justify-content-center h-100"
+                                            for="bank_mandiri">
+                                            <!-- Ganti src dengan path logo di folder public Laravel Anda -->
+                                            <img src="https://simulator.sandbox.midtrans.com/assets/images/payment_partners/bank_transfer/mandiri_bill.png"
+                                                alt="Mandiri" class="bank-logo mb-2">
+                                            <span class="fw-semibold small">Mandiri</span>
                                         </label>
                                     </div>
                                 </div>

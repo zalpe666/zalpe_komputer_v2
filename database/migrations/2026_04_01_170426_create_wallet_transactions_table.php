@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('wallet_transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('wallet_id')->constrained()->cascadeOnDelete();
-            $table->enum('type', ['income', 'expense'])->default('income'); // income = masuk, expense = keluar
-            $table->string('description');
+            $table->enum('type', ['income', 'expense']);
             $table->bigInteger('amount');
-            $table->enum('status', ['pending', 'verified'])->default('pending'); // pending = belum bisa diambil
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

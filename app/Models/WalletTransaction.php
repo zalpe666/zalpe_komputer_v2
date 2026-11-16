@@ -7,29 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class WalletTransaction extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'wallet_id',
-        'type',        // income / expense
+        'type',
         'amount',
-        'description',
-        'status',      // pending / verified
+        'description'
     ];
 
-    /**
-     * Relasi ke Wallet
-     */
     public function wallet()
     {
         return $this->belongsTo(Wallet::class);
-    }
-
-    /**
-     * Helper: cek apakah sudah bisa dipakai (verified)
-     */
-    public function isVerified()
-    {
-        return $this->status === 'verified';
     }
 }

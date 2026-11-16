@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->bigInteger('balance')->default(0); // saldo tersedia (tidak termasuk pending)
+            $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
+            $table->enum('status', ['verified','unverified','inactive','pending'])->default('pending');
+            $table->bigInteger('balance')->default(0);
             $table->timestamps();
         });
     }

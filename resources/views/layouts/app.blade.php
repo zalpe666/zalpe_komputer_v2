@@ -12,6 +12,26 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css">
+    <style>
+        .icon-sm {
+            width: 14px;
+            height: 14px;
+        }
+
+        .icon-md {
+            width: 18px;
+            height: 18px;
+        }
+
+        .icon-lg {
+            width: 20px;
+            height: 20px;
+        }
+        .icon-xl {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
 </head>
 
 <body>

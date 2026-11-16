@@ -64,13 +64,15 @@
                             @if ($transaction->bank == 'mandiri')
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <span class="text-muted">Biller Code</span>
-                                    <span class="fw-bold">{{ $transaction->bill_key }}</span>
+                                    <span class="fw-bold">{{ $transaction->biller_code }}</span>
                                 </div>
                                 <div class="mb-3">
                                     <label class="text-muted d-block mb-2">Bill Key</label>
-                                @else
-                                    <div class="mb-3">
-                                        <label class="text-muted d-block mb-2">Nomor Virtual Account</label>
+                                    <span class="fw-bold">{{ $transaction->bill_key }}</span>
+                                </div>
+                            @else
+                                <div class="mb-3">
+                                    <label class="text-muted d-block mb-2">Nomor Virtual Account</label>
                             @endif
                             {{-- Input Group Copy VA --}}
                             <div class="input-group input-group-lg shadow-sm">

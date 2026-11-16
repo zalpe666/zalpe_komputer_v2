@@ -10,7 +10,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -119,7 +119,7 @@
 
             {{-- 🔹 SIDEBAR --}}
             <div class="col-lg-3">
-                <div class="card sidebar-card shadow-sm">
+                <div class="card sidebar-card shadow-sm" id="customerSidebar">
                     {{-- Header Profile --}}
                     <div class="user-mini-profile">
                         <div class="avatar-circle">
@@ -131,7 +131,6 @@
 
                     <div class="card-body p-2">
                         <div class="list-group list-group-flush">
-
                             <div class="sidebar-title">Menu Utama</div>
                             <a href="{{ route('customer.dashboard.index') }}"
                                 class="list-group-item list-group-item-action d-flex align-items-center gap-2 {{ Request::routeIs('customer.dashboard.index') ? 'active' : '' }}">
@@ -169,7 +168,9 @@
                             {{-- LOGOUT --}}
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="btn btn-logout d-flex align-items-center justify-content-center gap-2" style="width: 90%">
+                                <button type="submit"
+                                    class="btn btn-logout d-flex align-items-center justify-content-center gap-2"
+                                    style="width: 90%">
                                     <i class="bi bi-box-arrow-right"></i> Keluar Akun
                                 </button>
                             </form>
@@ -186,7 +187,15 @@
                         <h4 class="fw-bold text-dark">@yield('page_title')</h4>
                         <hr class="opacity-25">
                     </div>
-                    
+                    <div class="d-lg-none mb-3">
+                        <button class="btn btn-success rounded-3" type="button" data-bs-toggle="offcanvas"
+                            data-bs-target="#customerOffcanvas" aria-controls="customerOffcanvas">
+
+                            <i class="bi bi-list me-2"></i>
+                            Menu Akun
+                        </button>
+                    </div>
+
                     @yield('content')
                 </div>
             </div>
@@ -214,5 +223,73 @@
         </script>
     @endif
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('customerSidebar');
+
+            if (!sidebar) return;
+
+            const originalParent = sidebar.parentNode;
+            const originalNextSibling = sidebar.nextSibling;
+
+            // Buat elemen Offcanvas
+            const offcanvas = document.createElement('div');
+
+            offcanvas.className = 'offcanvas offcanvas-start';
+            offcanvas.id = 'customerOffcanvas';
+            offcanvas.tabIndex = -1;
+
+            offcanvas.innerHTML = `
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-bold">
+                Menu Akun
+            </h5>
+
+            <button type="button"
+                class="btn-close"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close">
+            </button>
+        </div>
+
+        <div class="offcanvas-body p-0"></div>
+    `;
+
+            document.body.appendChild(offcanvas);
+
+            const offcanvasBody = offcanvas.querySelector('.offcanvas-body');
+
+            function updateSidebar() {
+                if (window.innerWidth < 992) {
+
+                    // Pindahkan sidebar ke Offcanvas
+                    if (sidebar.parentNode !== offcanvasBody) {
+                        offcanvasBody.appendChild(sidebar);
+                    }
+
+                    sidebar.classList.remove('shadow-sm');
+                    sidebar.style.borderRadius = '0';
+                    sidebar.style.position = 'static';
+
+                } else {
+
+                    // Kembalikan sidebar ke posisi desktop
+                    if (sidebar.parentNode !== originalParent) {
+                        originalParent.insertBefore(sidebar, originalNextSibling);
+                    }
+
+                    sidebar.classList.add('shadow-sm');
+                    sidebar.style.borderRadius = '';
+                    sidebar.style.position = '';
+                }
+            }
+
+            updateSidebar();
+
+            window.addEventListener('resize', updateSidebar);
+        });
+    </script>
+
 </body>
+
 </html>

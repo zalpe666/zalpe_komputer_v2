@@ -22,7 +22,6 @@
             <!-- Update Profile -->
             <div class="col-12">
                 <section class="mb-4">
-
                     <div class="card shadow-sm">
                         <div class="card-body">
 
