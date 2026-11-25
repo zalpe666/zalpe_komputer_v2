@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
+use App\Services\NotificationService;
 
 class CustomerKycController extends Controller
 {
@@ -44,6 +45,13 @@ class CustomerKycController extends Controller
                     'amount' => 1000,
                     'description' => '🎉 Selamat! Anda mendapatkan saldo awal Zalpe Pay sebesar Rp1.000'
                 ]);
+                NotificationService::create(
+                    $user->id,
+                    'KYC Berhasil!',
+                    'Selamat! Verifikasi KTP kamu berhasil. Kamu mendapatkan bonus saldo Zalpe Pay sebesar Rp1.000.',
+                    'Wallet',
+                    route('customer.wallet.index')
+                );
             }
         });
 

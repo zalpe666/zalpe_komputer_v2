@@ -84,10 +84,13 @@
         .product-card .img-container {
             aspect-ratio: 1 / 1;
         }
-    }   
+    }
 </style>
 
-<a href="{{ route('customer.product.show', $product->slug) }}" class="product-link d-block text-decoration-none">
+<a href="{{ $product->is_games
+    ? route('customer.game.show', $product->slug)
+    : route('customer.product.show', $product->slug) }}"
+    class="product-link d-block text-decoration-none">
 
     <div class="card h-100 product-card shadow-sm {{ $cardTheme }}">
 
@@ -120,7 +123,7 @@
             <div class="mb-2">
                 <span class="badge {{ $isGaming ? 'bg-danger' : 'bg-light text-dark border' }}"
                     style="font-size: 0.65rem; letter-spacing: 0.5px; text-transform: uppercase;">
-                    {{ $product->brand->name ?? 'Generic' }}
+                    {{ $product->brand->name ?? $product->publishers }}
                 </span>
             </div>
 

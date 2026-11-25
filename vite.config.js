@@ -13,7 +13,7 @@ export default defineConfig({
         port: 5173,
         cors: true, // 🔥 INI PENTING
         hmr: {
-            host: '192.168.1.9', // 🔥 IP laptop kamu
+            host: '192.168.1.7', // 🔥 IP laptop kamu
         },
     },
 })

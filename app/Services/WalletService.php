@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
+use App\Services\WalletService;
+
 use Exception;
 
 class WalletService

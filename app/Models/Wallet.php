@@ -7,7 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class Wallet extends Model
 {
-    protected $fillable = ['user_id', 'balance','status'];
+    protected $fillable = [
+        'user_id',
+        'nik',
+        'full_name',
+        'birth_date',
+        'pin',
+        'balance',
+        'status',
+    ];
+
+    protected $hidden = [
+        'pin',
+    ];
+    
+    protected function casts(): array
+    {
+        return [
+            'birth_date' => 'date',
+            'balance' => 'decimal:2',
+        ];
+    }
 
     public function user()
     {

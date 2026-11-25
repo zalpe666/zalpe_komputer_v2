@@ -19,8 +19,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardProductController;
 use App\Http\Controllers\DashboardTransactionController;
 use App\Http\Controllers\MidtransController;
+use App\Http\Controllers\CustomerCheckoutNowController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\DashboardSteamImportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,8 +36,6 @@ Route::middleware(['auth', 'role:master,admin'])->prefix('dashboard')->as('admin
     Route::get('/product', [DashboardProductController::class, 'index'])->name('product.index');
     Route::get('/product/create', [DashboardProductController::class, 'create'])->name('product.create');
     Route::post('/product/store', [DashboardProductController::class, 'store'])->name('product.store');
-    Route::get('/product/edit/{id}', [DashboardProductController::class, 'edit'])->name('product.edit');
-    Route::get('/product/{id}', [DashboardProductController::class, 'show'])->name('product.show');
 
     Route::post('/product/update/{id}', [DashboardProductController::class, 'update'])->name('product.update');
     Route::post('/product/delete/{id}', [DashboardProductController::class, 'destroy'])->name('product.delete');
@@ -43,6 +44,13 @@ Route::middleware(['auth', 'role:master,admin'])->prefix('dashboard')->as('admin
     Route::get('/transaction-today', [DashboardTransactionController::class, 'today'])->name('transaction.today');
     Route::get('/transaction/{id}', [DashboardTransactionController::class, 'show'])->name('transaction.show');
     Route::put('/transaction/{id}/status', [DashboardTransactionController::class, 'updateStatus'])->name('transaction.updateStatus');
+
+    Route::get('/product/steam-import', [DashboardSteamImportController::class, 'index'])->name('product.steam-import');
+
+    Route::post('/product/steam-import', [DashboardSteamImportController::class, 'import'])->name('product.steam-import.store');
+
+    Route::get('/product/edit/{id}', [DashboardProductController::class, 'edit'])->name('product.edit');
+    Route::get('/product/{id}', [DashboardProductController::class, 'show'])->name('product.show');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -62,6 +70,8 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::get('/product', [CustomerProductController::class, 'index'])->name('product.index');
     Route::get('/product/{slug}', [CustomerProductController::class, 'show'])->name('product.show');
 
+    Route::get('/game/{slug}', [CustomerProductController::class, 'showGame'])->name('game.show');
+
     Route::get('/cart', [CustomerCartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{id}', [CustomerCartController::class, 'addToCart'])->name('cart.add');
     Route::post('/cart/update/{id}', [CustomerCartController::class, 'updateCart'])->name('cart.update');
@@ -69,8 +79,8 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::get('/checkout', [CustomerCheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CustomerCheckoutController::class, 'store'])->name('checkout.store');
 
-    Route::get('/checkout-now/{id}', [CustomerCheckoutController::class, 'checkoutNowIndex'])->name('checkout.now.index');
-    Route::post('/checkout-now/process', [CustomerCheckoutController::class, 'checkoutNowProcess'])->name('checkout.now.process');
+    Route::get('/checkout-now/{id}', [CustomerCheckoutNowController::class, 'index'])->name('checkout.now.index');
+    Route::post('/checkout-now/process', [CustomerCheckoutNowController::class, 'store'])->name('checkout.now.process');
     Route::get('/couriers/{district_id}', [CustomerCourierController::class, 'getByDistrict']);
     Route::get('/addresses', [CustomerAddressController::class, 'index'])->name('address.index');
     Route::get('/addresses/create', [CustomerAddressController::class, 'create'])->name('address.create');
@@ -98,15 +108,27 @@ Route::middleware(['auth', 'role:customer'])->prefix('home')->as('customer.')->g
     Route::get('/cities/{province}', [CustomerAddressController::class, 'getCities']);
     Route::get('/districts/{city}', [CustomerAddressController::class, 'getDistricts']);
 
+
+
     Route::get('/wallet', [CustomerWalletController::class, 'index'])->name('wallet.index');
 
+    Route::get('/wallet/register', [CustomerWalletController::class, 'register'])->name('wallet.register');
+    Route::post('/wallet/register', [CustomerWalletController::class, 'storeRegister'])->name('wallet.register.store');
+
     // aksi wallet (demo)
+    Route::get('/wallet/{id}/pay', [CustomerWalletController::class, 'pay'])
+        ->name('wallet.pay.index');
+
+    Route::post('/wallet/{id}/pay', [CustomerWalletController::class, 'processPay'])
+        ->name('wallet.pay.process');
     Route::post('/wallet/topup', [CustomerWalletController::class, 'topup'])->name('wallet.topup');
     Route::post('/wallet/pay', [CustomerWalletController::class, 'pay'])->name('wallet.pay');
     Route::post('/wallet/withdraw', [CustomerWalletController::class, 'withdraw'])->name('wallet.withdraw');
-
     // KYC dummy
-    Route::post('/kyc/verify', [CustomerKycController::class, 'verify'])->name('kyc.verify');
+    // Route::post('/kyc/verify', [CustomerKycController::class, 'verify'])->name('kyc.verify');
+
+    Route::get('/notification/{id}/read', [CustomerNotificationController::class, 'read'])->name('notification.read');
+    Route::get('/notification', [CustomerNotificationController::class, 'index'])->name('notification.index');
 });
 
 require __DIR__ . '/auth.php';

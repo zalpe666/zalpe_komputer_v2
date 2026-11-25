@@ -41,29 +41,66 @@
 
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
 
+
                             <div class="card mt-4">
                                 <div class="card-body">
                                     <h5 class="mb-3">Payment Method</h5>
 
-                                    <!-- MIDTRANS -->
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="payment_method"
-                                            value="midtrans" required>
-                                        <label class="form-check-label">
-                                            Bank Transfer (BCA, Mandiri, BNI)
+                                    {{-- BCA --}}
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" name="bank" id="bankBca"
+                                            value="bca" data-payment="midtrans" required>
+                                        <label class="form-check-label" for="bankBca">
+                                            Bank Transfer (BCA)
                                         </label>
                                     </div>
 
-                                    <!-- WALLET -->
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="payment_method" value="wallet">
-                                        <label class="form-check-label">
-                                            Wallet (Saldo: Rp
-                                            {{ number_format(auth()->user()->wallet->balance ?? 0, 0, ',', '.') }})
+                                    {{-- MANDIRI --}}
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" name="bank" id="bankMandiri"
+                                            value="mandiri" data-payment="midtrans">
+                                        <label class="form-check-label" for="bankMandiri">
+                                            Bank Transfer (Mandiri)
                                         </label>
                                     </div>
+
+                                    {{-- BNI --}}
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" name="bank" id="bankBni"
+                                            value="bni" data-payment="midtrans">
+                                        <label class="form-check-label" for="bankBni">
+                                            Bank Transfer (BNI)
+                                        </label>
+                                    </div>
+
+                                    <hr>
+
+                                    {{-- WALLET --}}
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" name="bank" id="paymentWallet"
+                                            value="wallet" data-payment="wallet" {{ !$walletAvailable ? 'disabled' : '' }}>
+
+                                        <label class="form-check-label {{ !$walletAvailable ? 'text-muted' : '' }}"
+                                            for="paymentWallet"
+                                            style="{{ !$walletAvailable ? 'cursor: not-allowed; pointer-events: none;' : '' }}">
+
+                                            Wallet (Saldo:
+                                            Rp{{ number_format($wallet->balance ?? 0, 0, ',', '.') }})
+
+                                            @if (!$wallet)
+                                                <span class="text-danger small">(Wallet belum tersedia)</span>
+                                            @elseif (!$walletAvailable)
+                                                <span class="text-danger small">(Saldo tidak mencukupi)</span>
+                                            @endif
+
+                                        </label>
+                                    </div>
+                                    {{-- Hidden payment method --}}
+                                    <input type="hidden" name="payment_method" id="paymentMethod" value="">
+
                                 </div>
                             </div>
+
 
                             <button class="btn btn-primary w-100 mt-3" {{ $product->is_out_of_stock ? 'disabled' : '' }}>
                                 Proceed to Payment

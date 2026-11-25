@@ -16,10 +16,13 @@ class CustomerController extends Controller
         $banners = Banner::all();
 
         $productsLatest = Product::where('is_active', true)
+            ->where('is_games', false)
             ->latest()
             ->limit(10)
             ->get();
+
         $productsDiscount = Product::where('is_active', true)
+            ->where('is_games', false)
             ->where('discount', '>', 0)
             ->latest()
             ->limit(10)
@@ -29,9 +32,9 @@ class CustomerController extends Controller
             ->latest()
             ->limit(10)
             ->get();
-        $categories = Category::limit(12)->get();
+        $categories = Category::limit(20)->get();
 
-        $brands = Brand::limit(10)->get();
+        $brands = Brand::limit(20)->get();
 
         return view('customer.home.index', compact(
             'productsLatest',

@@ -91,7 +91,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-2">
                     <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-success small fw-bold">{{ $product->category->name }}</a></li>
-                    <li class="breadcrumb-item active small" aria-current="page">{{ $product->brand->name }}</li>
+                    <li class="breadcrumb-item active small" aria-current="page">{{ $product->brand->name ?? $product->developers }}</li>
                 </ol>
             </nav>
 

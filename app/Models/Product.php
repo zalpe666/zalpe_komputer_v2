@@ -11,6 +11,7 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
+        'steam_app_id',
         'name',
         'category_id',
         'brand_id',
@@ -24,12 +25,21 @@ class Product extends Model
         'stock',
         'is_active',
         'rating',
+        'is_digital',
+        'is_games',
+        'developers',
+        'publishers',
+        'images',
+        'movies',
+        'images_bg',
     ];
 
     protected $casts = [
         'is_digital' => 'boolean',
         'is_games' => 'boolean',
         'is_active' => 'boolean',
+        'images' => 'array',
+        'movies' => 'array',
     ];
 
     protected static function boot()

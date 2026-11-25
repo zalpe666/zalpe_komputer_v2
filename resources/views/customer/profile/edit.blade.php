@@ -1,23 +1,11 @@
 @extends('layouts.customer-layout')
 
 @section('title', 'Admin Panel')
+@section('page_title', 'Profile')
 
 @section('content')
 
     <div class="container">
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb custom-breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    <a href="{{ route('admin.dashboard.index') }}" class="breadcrumb-link">
-                        Dashboard
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Profile
-                </li>
-            </ol>
-        </nav>
-        <h3 class="mb-4 fw-bold">Profile</h3>
         <div class="row g-4">
             <!-- Update Profile -->
             <div class="col-12">
@@ -94,7 +82,7 @@
                                 <!-- Button -->
                                 <div class="d-flex align-items-center gap-3">
 
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-success">
                                         Save
                                     </button>
 
@@ -175,7 +163,7 @@
                                 <!-- Button + Status -->
                                 <div class="d-flex align-items-center gap-3">
 
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-success">
                                         Save
                                     </button>
 
@@ -198,7 +186,7 @@
             <div class="col-12">
                 <section class="mb-4">
 
-                    <div class="card border-danger shadow-sm">
+                    <div class="card shadow-sm">
                         <div class="card-body">
 
                             <!-- Header -->

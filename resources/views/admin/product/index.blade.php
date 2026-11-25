@@ -31,6 +31,12 @@
                         class="btn btn-primary rounded-pill px-4 shadow-sm fw-medium">
                         <i class="bi bi-plus-lg me-1"></i> Add Product
                     </a>
+
+                    <a href="{{ route('admin.product.steam-import') }}" class="btn btn-primary">
+                        <i class="fas fa-steam"></i>
+                        Import dari Steam
+                    </a>
+
                 </div>
 
                 <!-- Filter Form -->

@@ -17,7 +17,7 @@ class CustomerTransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $transactionTypes = ['Shopping', 'Games', 'Top-Up', 'Phone Credit'];
+        $transactionTypes = ['Shopping', 'Games', 'Top-Up', 'Phone Credit','Digital'];
 
         $query = Transaction::with(['transactionDetails.product'])
             ->where('user_id', auth()->id())

@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use App\Models\TransactionDetail;
+use App\Models\UserGame;
 
 class CustomerProductController extends Controller
 {
@@ -105,6 +106,26 @@ class CustomerProductController extends Controller
             'totalReview',
             'avgRating',
             'ratingCounts'
+        ));
+    }
+    public function showGame($slug)
+    {
+        $product = Product::where('slug', $slug)
+            ->where('is_games', true)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $isOwned = false;
+
+        if (auth()->check()) {
+            $isOwned = UserGame::where('user_id', auth()->id())
+                ->where('product_id', $product->id)
+                ->exists();
+        }
+
+        return view('customer.games.show', compact(
+            'product',
+            'isOwned'
         ));
     }
 }

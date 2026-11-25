@@ -123,4 +123,12 @@ class DashboardProductController extends Controller
         Product::findOrFail($id)->delete();
         return redirect()->back()->with('success', 'Berhasil delete');
     }
+
+    public function show($id)
+    {
+        $product = Product::with(['category', 'brand'])
+            ->findOrFail($id);
+
+        return view('admin.product.show', compact('product'));
+    }
 }

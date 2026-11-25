@@ -16,6 +16,7 @@ use Midtrans\CoreApi;
 use App\Models\Wallet;
 use App\Services\NotificationService;
 use App\Services\WalletService;
+use Illuminate\Support\Facades\Log;
 
 class CustomerCheckoutController extends Controller
 {
@@ -249,49 +250,5 @@ class CustomerCheckoutController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
-    }
-    public function checkoutNowIndex($id)
-    {
-        $product = Product::findOrFail($id);
-        return view('customer.checkout.now.index', compact('product'));
-    }
-    public function checkoutNowProcess(Request $request)
-    {
-        $product = Product::findOrFail($request->product_id);
-        $user = auth()->user();
-
-        // Validasi
-        if ($product->is_out_of_stock) {
-            return back()->with('error', 'Product out of stock');
-        }
-        $total_discount = $product->default_price - $product->final_price;
-        $date = date('dmY');
-        $time = date('His');
-        $randomCode = rand(100, 999);
-        $invoice = "ZK-{$date}-{$time}-{$randomCode}";
-        $shipping_cost = 0;
-        // Buat transaksi
-        $transaction = Transaction::create([
-            'invoice' => $invoice,
-            'transaction_type' => 'Top-Up',
-            'user_id' => $user->id,
-            'subtotal' => $product->default_price,
-            'discount_by_merchant' => $total_discount,
-            'shipping_cost' => $shipping_cost,
-            'transaction_status' => 'Waiting Payment',
-            'total' => $product->final_price + $shipping_cost,
-            'payment_method' => $request->payment_method,
-        ]);
-
-        // Simpan detail
-        $transaction->transactionDetails()->create([
-            'product_id' => $product->id,
-            'qty' => 1,
-            'price' => $product->final_price,
-            'total' => $product->final_price,
-        ]);
-
-
-        return redirect()->route('customer.transaction.index')->with('success', 'Checkout successful');
     }
 }

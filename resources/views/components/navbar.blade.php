@@ -112,28 +112,42 @@
                         </a>
                     </li>
 
+
+                    @php
+                        $unreadCount = $notifications->where('is_read', false)->count();
+                    @endphp
+
                     <li class="nav-item dropdown me-lg-2">
                         <a class="nav-link d-flex align-items-center gap-1" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
+
+                            {{-- Desktop --}}
                             <div class="position-relative d-none d-sm-inline-flex align-items-center">
                                 <i data-lucide="bell" class="icon-lg"></i>
 
-                                @if ($notifications->count() > 0)
+                                @if ($unreadCount > 0)
                                     <span
                                         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light"
                                         style="font-size: 0.65rem; padding: 0.25em 0.45em;">
-                                        {{ $notifications->count() > 99 ? '99+' : $notifications->count() }}
+                                        {{ $unreadCount > 99 ? '99+' : $unreadCount }}
                                         <span class="visually-hidden">notifikasi belum dibaca</span>
                                     </span>
                                 @endif
                             </div>
 
-                            {{-- Tampilan di layar mobile (HP) --}}
+                            {{-- Mobile --}}
                             <span class="d-inline d-sm-none">
                                 Notifikasi
-                                @if ($notifications->count() > 0)
-                                    <span class="badge rounded-pill bg-danger ms-1">{{ $notifications->count() }}</span>
+
+                                @if ($unreadCount > 0)
+                                    <span class="badge rounded-pill bg-danger ms-1">
+                                        {{ $unreadCount > 99 ? '99+' : $unreadCount }}
+                                    </span>
                                 @endif
+                                @php
+                                    $unreadNotifications = $notifications->where('is_read', false);
+                                    $unreadCount = $unreadNotifications->count();
+                                @endphp
                             </span>
 
                             <i data-lucide="chevron-down" class="icon-sm"></i>
@@ -142,25 +156,29 @@
                         <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-0 overflow-hidden"
                             style="width: 340px;">
 
-                            {{-- Header Notifikasi --}}
+                            {{-- Header --}}
                             <div class="px-3 py-2 bg-light border-bottom d-flex justify-content-between align-items-center">
                                 <span class="fw-bold small text-dark">Notifikasi</span>
 
-                                @if ($notifications->count() > 0)
+                                @if ($unreadCount > 0)
                                     <span class="badge bg-success-subtle text-success rounded-pill">
-                                        {{ $notifications->count() }}
+                                        {{ $unreadCount }}
                                     </span>
                                 @endif
                             </div>
 
                             {{-- Daftar Notifikasi --}}
                             <div style="max-height: 320px; overflow-y: auto;">
-                                @forelse ($notifications as $notif)
-                                    <a href="{{ $notif->url ?? '#' }}"
-                                        class="dropdown-item px-3 py-2 border-bottom text-wrap {{ !$notif->read_at ? 'bg-success bg-opacity-10' : '' }}">
+                                @forelse ($unreadNotifications as $notif)
+                                    <a href="{{ route('customer.notification.read', $notif->id) }}"
+                                        class="dropdown-item px-3 py-2 border-bottom text-wrap {{ !$notif->is_read ? 'bg-success bg-opacity-10' : '' }}">
 
                                         <p class="mb-1 fw-semibold small text-dark">
                                             {{ $notif->title }}
+
+                                            @if (!$notif->is_read)
+                                                <span class="badge bg-success ms-1">New</span>
+                                            @endif
                                         </p>
 
                                         <p class="mb-1 text-muted small" style="line-height: 1.4;">
@@ -177,21 +195,28 @@
                                     <div class="text-center py-5 px-3 text-muted">
                                         <i data-lucide="bell-off" class="mb-2 text-secondary"
                                             style="width: 28px; height: 28px;"></i>
-                                        <p class="mb-0 small">Belum ada notifikasi</p>
+                                        <p class="mb-0 small">Belum ada notifikasi Terbaru</p>
+                                    </div>
+                                    <div class="p-2 text-center bg-light border-top">
+                                        <a href="{{ route('customer.notification.index') }}" class="text-decoration-none small fw-medium text-success">
+                                            Lihat Semua Notifikasi
+                                        </a>
                                     </div>
                                 @endforelse
                             </div>
 
                             {{-- Footer --}}
-                            @if ($notifications->count() > 0)
+                            @if ($unreadCount > 0)
                                 <div class="p-2 text-center bg-light border-top">
                                     <a href="#" class="text-decoration-none small fw-medium text-success">
                                         Tandai semua sudah dibaca
                                     </a>
                                 </div>
                             @endif
+
                         </div>
                     </li>
+
 
                     {{-- Profile --}}
                     <li class="nav-item dropdown">
